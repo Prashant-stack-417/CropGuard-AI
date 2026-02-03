@@ -1,0 +1,3 @@
+/* App specific styles - most styling is done via Tailwind CSS */
+@import "tailwindcss";
+/* Additional custom styles can be added here if needed */
