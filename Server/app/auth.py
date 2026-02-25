@@ -2,27 +2,32 @@
 JWT authentication and password hashing.
 """
 
+import hashlib
+import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
 from app.config import JWT_SECRET, JWT_ALGORITHM, JWT_EXPIRE_MINUTES
 from app.database import get_db
 
-# ── Password hashing ─────────────────────────────────────────────────
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-
+# ── Password hashing (hashlib — Python 3.14 compatible) ──────────────
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    salt = secrets.token_hex(16)
+    pw_hash = hashlib.sha256(f"{salt}{password}".encode()).hexdigest()
+    return f"{salt}${pw_hash}"
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    try:
+        salt, pw_hash = hashed.split("$", 1)
+        return hashlib.sha256(f"{salt}{plain}".encode()).hexdigest() == pw_hash
+    except ValueError:
+        return False
 
 
 # ── JWT tokens ────────────────────────────────────────────────────────

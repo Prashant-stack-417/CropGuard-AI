@@ -117,7 +117,10 @@ const Upload = ({ onImageUpload, uploadedImage }) => {
                 <Button
                   variant="contained"
                   size="large"
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    fileInputRef.current?.click();
+                  }}
                 >
                   Choose File
                 </Button>
