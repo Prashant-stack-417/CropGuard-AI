@@ -1,6 +1,15 @@
-fastapi>=0.110,<1
-uvicorn[standard]>=0.29,<1
-pillow>=10,<11
-numpy>=1.26,<3
-pydantic>=2,<3
+# CropGuard AI — Python Dependencies
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+motor>=3.3.0
+pymongo>=4.6.0
 python-multipart>=0.0.9
+pydantic[email]>=2.5.0
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+pillow>=10.2.0
+numpy>=1.26.0
+
+# ML (optional — install when training/serving a real model)
+# tensorflow>=2.15.0
+# onnxruntime>=1.17.0
