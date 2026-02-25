@@ -49,99 +49,44 @@ function App() {
   const [detectionResult, setDetectionResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Simulated AI disease detection (replace with actual API call)
-  const simulateDetection = () => {
-    const diseases = [
-      {
-        diseaseName: "Late Blight",
-        cropName: "Tomato",
-        confidence: 94,
-        status: "Diseased",
-        description:
-          "Late blight is a devastating disease that affects tomato plants, causing dark lesions on leaves and stems. It spreads rapidly in humid conditions and can destroy entire crops if left untreated.",
-        treatments: [
-          "Remove and destroy infected plant parts immediately",
-          "Apply copper-based fungicides every 7-10 days",
-          "Ensure proper plant spacing for air circulation",
-          "Avoid overhead watering to reduce leaf wetness",
-          "Use disease-resistant tomato varieties in future plantings",
-        ],
-      },
-      {
-        diseaseName: "Powdery Mildew",
-        cropName: "Cucumber",
-        confidence: 89,
-        status: "Diseased",
-        description:
-          "Powdery mildew appears as white, powdery spots on leaves and stems. It thrives in warm, dry conditions with high humidity and can reduce crop yield significantly.",
-        treatments: [
-          "Apply sulfur or potassium bicarbonate fungicides",
-          "Remove heavily infected leaves",
-          "Improve air circulation around plants",
-          "Water plants at the base, not from above",
-          "Apply neem oil spray as a natural alternative",
-        ],
-      },
-      {
-        diseaseName: "Leaf Rust",
-        cropName: "Wheat",
-        confidence: 91,
-        status: "Diseased",
-        description:
-          "Leaf rust causes orange-brown pustules on wheat leaves, reducing photosynthesis and grain quality. It spreads through wind-borne spores.",
-        treatments: [
-          "Apply triazole fungicides at early infection stages",
-          "Use rust-resistant wheat varieties",
-          "Practice crop rotation",
-          "Remove volunteer wheat plants that harbor spores",
-          "Monitor fields regularly for early detection",
-        ],
-      },
-      {
-        diseaseName: "Healthy",
-        cropName: "Rice",
-        confidence: 97,
-        status: "Healthy",
-        description:
-          "The plant appears healthy with no visible signs of disease. Continue regular monitoring and maintain good agricultural practices.",
-        treatments: [
-          "Continue regular monitoring for any changes",
-          "Maintain proper irrigation and drainage",
-          "Apply balanced fertilizers as per soil test",
-          "Practice preventive pest management",
-          "Ensure proper plant spacing",
-        ],
-      },
-    ];
-
-    // Randomly select a disease for demo
-    const randomDisease = diseases[Math.floor(Math.random() * diseases.length)];
-
+  const detectDisease = async (file) => {
     setIsLoading(true);
     setDetectionResult(null);
 
-    // Simulate API delay
-    setTimeout(() => {
-      setDetectionResult(randomDisease);
-      setIsLoading(false);
+    const formData = new FormData();
+    formData.append("file", file);
 
-      // Scroll to results
+    try {
+      const response = await fetch("http://localhost:8000/detect", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.detail || `Server error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setDetectionResult(data);
+
       setTimeout(() => {
-        const resultsSection = document.getElementById("results");
-        if (resultsSection) {
-          resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
+        document.getElementById("results")?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
-    }, 2500);
+    } catch (error) {
+      console.error("Detection failed:", error);
+      alert(`Detection failed: ${error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleImageUpload = (imageData) => {
+  const handleImageUpload = (imageData, file) => {
     setUploadedImage(imageData);
     setDetectionResult(null);
 
-    if (imageData) {
-      // Automatically start detection when image is uploaded
-      simulateDetection();
+    if (file) {
+      detectDisease(file);
     }
   };
 

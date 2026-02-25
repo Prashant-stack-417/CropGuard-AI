@@ -40,7 +40,7 @@ const Upload = ({ onImageUpload, uploadedImage }) => {
     if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        onImageUpload(e.target.result);
+        onImageUpload(e.target.result, file); // pass dataURL + raw File
       };
       reader.readAsDataURL(file);
     } else {
