@@ -19,7 +19,7 @@ JWT_ALGORITHM = "HS256"
 JWT_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES", "1440"))  # 24 hours
 
 # ── ML Model ─────────────────────────────────────────────────────────
-MODEL_PATH = os.getenv("MODEL_PATH", str(MODEL_DIR / "crop_disease_model.h5"))
+MODEL_PATH = os.getenv("MODEL_PATH", str(MODEL_DIR / "crop_disease_model.pt"))
 CLASS_MAP_PATH = os.getenv("CLASS_MAP_PATH", str(MODEL_DIR / "class_map.json"))
 CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "0.40"))
 
