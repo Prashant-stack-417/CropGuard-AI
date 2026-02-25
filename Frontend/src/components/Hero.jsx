@@ -2,149 +2,157 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
-import { alpha } from "@mui/material/styles";
 import CameraAltOutlined from "@mui/icons-material/CameraAltOutlined";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
-import ScienceOutlined from "@mui/icons-material/ScienceOutlined";
 
 const Hero = ({ onUploadClick }) => {
   return (
     <Box
       id="home"
       sx={{
-        pt: { xs: 12, sm: 16 },
+        pt: { xs: 10, sm: 14 },
         pb: { xs: 8, sm: 12 },
-        background: (theme) =>
-          `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.05)} 0%, ${alpha(theme.palette.secondary.main, 0.15)} 100%)`,
+        background: "linear-gradient(170deg, #f4f7f0 0%, #e8f0e0 40%, #fafaf7 100%)",
         position: "relative",
         overflow: "hidden",
       }}
     >
-      <Container>
-        <Grid container spacing={6} alignItems="center">
-          <Grid item xs={12} md={6}>
-            <Stack spacing={4}>
-              <Typography
-                variant="h1"
-                sx={{
-                  fontSize: { xs: "2.5rem", sm: "3.5rem", md: "4rem" },
-                  fontWeight: 800,
-                  color: "text.primary",
-                  lineHeight: 1.2,
-                }}
-              >
-                Detect Crop Diseases{" "}
-                <Typography
-                  component="span"
-                  sx={{
-                    fontSize: "inherit",
-                    fontWeight: "inherit",
-                    color: "primary.main",
-                  }}
-                >
-                  Instantly
-                </Typography>{" "}
-                Using AI
-              </Typography>
+      {/* Soft decorative shape */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: -100,
+          right: -100,
+          width: 400,
+          height: 400,
+          borderRadius: "50%",
+          background: "rgba(74, 124, 89, 0.05)",
+          pointerEvents: "none",
+        }}
+      />
 
-              <Typography
-                variant="h5"
-                color="text.secondary"
-                sx={{ maxWidth: 600 }}
-              >
-                Empower your farming with cutting-edge artificial intelligence.
-                Upload a leaf image and get accurate disease detection,
-                confidence scores, and expert treatment recommendations in
-                seconds.
-              </Typography>
-
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                <Button
-                  variant="contained"
-                  size="large"
-                  startIcon={<CameraAltOutlined />}
-                  onClick={onUploadClick}
-                  sx={{
-                    py: 1.5,
-                    px: 4,
-                    fontSize: "1.1rem",
-                    textTransform: "none",
-                    borderRadius: 2,
-                  }}
-                >
-                  Upload Leaf Image
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="large"
-                  startIcon={<InfoOutlined />}
-                  onClick={() =>
-                    document
-                      .getElementById("how-it-works")
-                      .scrollIntoView({ behavior: "smooth" })
-                  }
-                  sx={{
-                    py: 1.5,
-                    px: 4,
-                    fontSize: "1.1rem",
-                    textTransform: "none",
-                    borderRadius: 2,
-                  }}
-                >
-                  How It Works
-                </Button>
-              </Stack>
-            </Stack>
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            md={6}
-            sx={{ display: { xs: "none", md: "block" } }}
+      <Container sx={{ position: "relative", zIndex: 1 }}>
+        <Stack
+          spacing={4}
+          alignItems="center"
+          textAlign="center"
+          maxWidth={720}
+          mx="auto"
+        >
+          {/* Badge */}
+          <Box
+            className="animate-fade-in-up"
+            sx={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 1,
+              bgcolor: "rgba(74, 124, 89, 0.08)",
+              borderRadius: 3,
+              px: 2.5,
+              py: 0.75,
+            }}
           >
-            <Box
+            <Typography
+              variant="body2"
+              sx={{ color: "#4a7c59", fontWeight: 600, letterSpacing: 0.3 }}
+            >
+              🌿 Smart Crop Protection
+            </Typography>
+          </Box>
+
+          {/* Heading */}
+          <Typography
+            variant="h1"
+            className="animate-fade-in-up"
+            sx={{
+              fontSize: { xs: "2.2rem", sm: "3rem", md: "3.5rem" },
+              lineHeight: 1.2,
+            }}
+          >
+            Keep your crops healthy,{" "}
+            <Typography
+              component="span"
               sx={{
-                position: "relative",
-                height: 400,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                fontSize: "inherit",
+                fontWeight: "inherit",
+                letterSpacing: "inherit",
+                color: "#4a7c59",
               }}
             >
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  bgcolor: alpha("#fff", 0.5),
-                  backdropFilter: "blur(20px)",
-                  borderRadius: 4,
-                  border: "4px solid",
-                  borderColor: (theme) =>
-                    alpha(theme.palette.primary.main, 0.2),
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  boxShadow: 3,
-                }}
-              >
-                <Stack alignItems="center" spacing={2}>
-                  <ScienceOutlined
-                    sx={{ fontSize: 120, color: "primary.main" }}
-                  />
-                  <Typography
-                    variant="h5"
-                    fontWeight={600}
-                    color="text.primary"
-                  >
-                    AI-Powered Detection
-                  </Typography>
-                </Stack>
+              naturally
+            </Typography>
+          </Typography>
+
+          {/* Subtitle */}
+          <Typography
+            variant="h6"
+            className="animate-fade-in-up"
+            sx={{
+              color: "text.secondary",
+              fontWeight: 400,
+              lineHeight: 1.7,
+              maxWidth: 560,
+              fontSize: { xs: "1rem", sm: "1.1rem" },
+            }}
+          >
+            Take a photo of any leaf that looks off. We'll help you figure out
+            what's going on and how to treat it — simple as that.
+          </Typography>
+
+          {/* CTA buttons */}
+          <Stack
+            className="animate-fade-in-up"
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+          >
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<CameraAltOutlined />}
+              onClick={onUploadClick}
+              sx={{ py: 1.5, px: 4, fontSize: "1.05rem" }}
+            >
+              Upload a Leaf Photo
+            </Button>
+            <Button
+              variant="outlined"
+              size="large"
+              startIcon={<InfoOutlined />}
+              onClick={() =>
+                document
+                  .getElementById("how-it-works")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+              sx={{ py: 1.5, px: 4, fontSize: "1.05rem" }}
+            >
+              Learn More
+            </Button>
+          </Stack>
+
+          {/* Stats row */}
+          <Stack
+            className="animate-fade-in-up"
+            direction="row"
+            spacing={{ xs: 3, sm: 6 }}
+            sx={{ pt: 3 }}
+          >
+            {[
+              { value: "95%+", label: "Accuracy" },
+              { value: "< 3s", label: "Results" },
+              { value: "10+", label: "Crop Types" },
+            ].map((stat) => (
+              <Box key={stat.label} textAlign="center">
+                <Typography variant="h4" sx={{ fontWeight: 800, color: "#4a7c59" }}>
+                  {stat.value}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.25 }}>
+                  {stat.label}
+                </Typography>
               </Box>
-            </Box>
-          </Grid>
-        </Grid>
+            ))}
+          </Stack>
+        </Stack>
       </Container>
     </Box>
   );

@@ -15,110 +15,98 @@ import PublicOutlined from "@mui/icons-material/PublicOutlined";
 const features = [
   {
     icon: PsychologyOutlined,
-    title: "AI-Powered Analysis",
-    description:
-      "Advanced deep learning models trained on thousands of crop disease images",
-    gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    title: "Smart Detection",
+    description: "Trained on thousands of real leaf images to spot diseases accurately.",
+    color: "#6d6daa",
+    bg: "#eeeef8",
   },
   {
     icon: SpeedOutlined,
-    title: "Fast & Accurate Detection",
-    description:
-      "Get results in seconds with over 95% accuracy across multiple crop types",
-    gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+    title: "Fast Results",
+    description: "Get answers in under 3 seconds — no waiting around.",
+    color: "#aa6d7a",
+    bg: "#f8eef0",
   },
   {
     icon: AgricultureOutlined,
-    title: "Farmer-Friendly Interface",
-    description:
-      "Simple, intuitive design that anyone can use without technical knowledge",
-    gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+    title: "Easy to Use",
+    description: "Designed for real people in the field — no tech skills required.",
+    color: "#4a7c59",
+    bg: "#eaf5ea",
   },
   {
     icon: PhoneAndroidOutlined,
-    title: "Mobile Compatible",
-    description: "Access from any device - smartphone, tablet, or computer",
-    gradient: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
+    title: "Works on Any Device",
+    description: "Use your phone in the field, tablet at home, or desktop in the office.",
+    color: "#5a8a9a",
+    bg: "#e8f2f5",
   },
   {
     icon: BoltOutlined,
-    title: "Real-Time Results",
-    description: "Instant disease detection and treatment recommendations",
-    gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+    title: "Actionable Plans",
+    description: "Don't just learn what's wrong — get clear steps for treatment.",
+    color: "#9b7d4a",
+    bg: "#f8f3ea",
   },
   {
     icon: PublicOutlined,
-    title: "Multi-Crop Support",
-    description:
-      "Detects diseases across various crops including rice, wheat, tomato, and more",
-    gradient: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
+    title: "Multiple Crops",
+    description: "Covers rice, wheat, tomato, cucumber, and more — growing all the time.",
+    color: "#5a7a5a",
+    bg: "#edf5ed",
   },
 ];
 
 const Features = () => {
   return (
-    <Box
-      id="features"
-      sx={{ py: { xs: 8, sm: 12 }, bgcolor: "background.default" }}
-    >
+    <Box id="features" sx={{ py: { xs: 8, sm: 12 }, bgcolor: "#fafaf7" }}>
       <Container maxWidth="lg">
         <Stack spacing={8}>
-          <Box textAlign="center">
-            <Typography variant="h2" fontWeight={700} gutterBottom>
-              Powerful Features
+          {/* Header */}
+          <Box textAlign="center" className="animate-fade-in-up">
+            <Typography variant="h2" sx={{ fontSize: { xs: "1.8rem", sm: "2.2rem" }, mb: 1.5 }}>
+              What Makes It Great
             </Typography>
-            <Typography
-              variant="h6"
-              color="text.secondary"
-              maxWidth={700}
-              mx="auto"
-            >
-              Everything you need for accurate crop disease detection and
-              management
+            <Typography variant="body1" color="text.secondary" maxWidth={520} mx="auto">
+              Built to help farmers protect their crops — simple, accurate, and free
             </Typography>
           </Box>
 
-          <Grid container spacing={4}>
+          {/* Feature cards */}
+          <Grid container spacing={3} className="stagger-children">
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
                 <Grid item xs={12} sm={6} lg={4} key={index}>
                   <Paper
-                    elevation={2}
+                    elevation={0}
+                    className="animate-fade-in-up hover-lift"
                     sx={{
-                      p: 4,
+                      p: 3.5,
                       height: "100%",
-                      transition: "all 0.3s",
-                      "&:hover": {
-                        transform: "translateY(-8px)",
-                        boxShadow: 6,
-                      },
+                      border: "1px solid rgba(0,0,0,0.06)",
                     }}
                   >
                     <Stack spacing={2}>
                       <Box
                         sx={{
-                          width: 64,
-                          height: 64,
-                          background: feature.gradient,
+                          width: 52,
+                          height: 52,
+                          bgcolor: feature.bg,
                           borderRadius: 2,
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          transition: "transform 0.3s",
-                          "&:hover": {
-                            transform: "scale(1.1) rotate(5deg)",
-                          },
                         }}
                       >
-                        <Icon sx={{ fontSize: 32, color: "white" }} />
+                        <Icon sx={{ fontSize: 26, color: feature.color }} />
                       </Box>
 
-                      <Typography variant="h5" fontWeight={700}>
+                      <Typography variant="subtitle1" fontWeight={700}>
                         {feature.title}
                       </Typography>
 
-                      <Typography color="text.secondary">
+                      <Typography variant="body2" color="text.secondary" lineHeight={1.7}>
                         {feature.description}
                       </Typography>
                     </Stack>
@@ -128,43 +116,39 @@ const Features = () => {
             })}
           </Grid>
 
+          {/* CTA Banner */}
           <Paper
-            elevation={3}
+            elevation={0}
+            className="animate-fade-in-up"
             sx={{
               p: { xs: 4, sm: 6 },
-              background: "linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%)",
-              color: "white",
+              bgcolor: "#4a7c59",
               textAlign: "center",
+              borderRadius: 3,
             }}
           >
-            <Stack spacing={3} alignItems="center">
-              <Typography variant="h4" fontWeight={700}>
-                Ready to protect your crops?
+            <Stack spacing={2.5} alignItems="center">
+              <Typography variant="h4" fontWeight={700} sx={{ color: "#fff", fontSize: { xs: "1.4rem", sm: "1.8rem" } }}>
+                Ready to check on your crops?
               </Typography>
-              <Typography variant="h6" sx={{ opacity: 0.9 }}>
-                Join thousands of farmers using AI for better yields
+              <Typography variant="body1" sx={{ color: "rgba(255,255,255,0.85)", maxWidth: 420 }}>
+                It's free, it's fast, and it might just save your harvest
               </Typography>
               <Button
                 variant="contained"
                 size="large"
                 onClick={() =>
-                  document
-                    .getElementById("upload")
-                    .scrollIntoView({ behavior: "smooth" })
+                  document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" })
                 }
                 sx={{
-                  bgcolor: "white",
-                  color: "primary.main",
-                  px: 6,
-                  py: 2,
-                  fontSize: "1.1rem",
-                  textTransform: "none",
-                  "&:hover": {
-                    bgcolor: "grey.100",
-                  },
+                  bgcolor: "#fff",
+                  color: "#4a7c59",
+                  px: 5,
+                  py: 1.5,
+                  "&:hover": { bgcolor: "#f0f0f0" },
                 }}
               >
-                Get Started Free
+                Get Started — It's Free
               </Button>
             </Stack>
           </Paper>

@@ -42,7 +42,7 @@ app = FastAPI(title="CropGuard AI", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -265,58 +265,60 @@ def run_model(image: Image.Image) -> DetectionResult:
     """
     Pre-process *image* and run it through the ML model.
 
-    ── Swap-in instructions when your model is ready ────────────────────────
+    Swap-in instructions when your model is ready:
+
     1.  Call load_model() in the startup block above and assign to _model.
     2.  Replace the DEMO block below with actual inference, for example:
 
-        TensorFlow / Keras:
+        TensorFlow / Keras::
+
             tensor = preprocess_image(image)            # shape (1,224,224,3)
             probs  = _model.predict(tensor)[0]          # shape (num_classes,)
             class_idx   = int(np.argmax(probs))
             confidence  = float(probs[class_idx])
 
-        PyTorch:
+        PyTorch::
+
             import torch
-            tensor = torch.from_numpy(preprocess_image(image))  # (1,3,H,W) if channels-first
+            tensor = torch.from_numpy(preprocess_image(image))
             with torch.no_grad():
                 probs = torch.softmax(_model(tensor), dim=1)[0]
             class_idx  = int(probs.argmax())
             confidence = float(probs[class_idx])
 
-        ONNX Runtime:
+        ONNX Runtime::
+
             input_name = _model.get_inputs()[0].name
             probs      = _model.run(None, {input_name: preprocess_image(image)})[0][0]
             class_idx  = int(np.argmax(probs))
             confidence = float(probs[class_idx])
 
-    3.  Then build and return the result:
+    3.  Then build and return the result::
 
-        if confidence < CONFIDENCE_THRESHOLD:
-            return DetectionResult(
-                diseaseName="Uncertain",
-                cropName="Unknown",
-                confidence=int(confidence * 100),
-                status="Uncertain",
-                description="The model could not confidently identify the disease. "
-                            "Please upload a clearer image of the crop leaf.",
-                treatments=["Consult a local agricultural expert for diagnosis."],
-            )
+            if confidence < CONFIDENCE_THRESHOLD:
+                return DetectionResult(
+                    diseaseName="Uncertain",
+                    cropName="Unknown",
+                    confidence=int(confidence * 100),
+                    status="Uncertain",
+                    description="The model could not confidently identify the disease. "
+                                "Please upload a clearer image of the crop leaf.",
+                    treatments=["Consult a local agricultural expert for diagnosis."],
+                )
 
-        template = DISEASE_CLASSES[class_idx]
-        return template.model_copy(update={"confidence": int(confidence * 100)})
-    ─────────────────────────────────────────────────────────────────────────
+            template = DISEASE_CLASSES[class_idx]
+            return template.model_copy(update={"confidence": int(confidence * 100)})
     """
 
     if _model is not None:
-        # ── Real inference path (activated once _model is loaded) ──────────
-        tensor      = preprocess_image(image)
-        # probs     = <call your model here>(tensor)   ← replace this line
+        # Real inference path (activated once _model is loaded)
+        tensor = preprocess_image(image)
+        # probs     = <call your model here>(tensor)
         # class_idx = int(np.argmax(probs))
         # confidence= float(probs[class_idx])
-        # … (see docstring above)
         pass  # remove this line when implementing
 
-    # ── DEMO path: random selection until a real model is integrated ────────
+    # DEMO path: random selection until a real model is integrated
     logger.info("DEMO mode: returning a random disease result.")
     template = random.choice(list(DISEASE_CLASSES.values()))
     demo_confidence = random.randint(75, 98)
