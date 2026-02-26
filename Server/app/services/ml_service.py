@@ -132,23 +132,81 @@ def preprocess_image(image: Image.Image) -> np.ndarray:
 
 
 # ── Class Key Matching ───────────────────────────────────────────────
+# Maps model output labels (from class_map.json) → DISEASE_DATABASE keys
+CLASS_NAME_TO_DB_KEY = {
+    # Rice
+    "Becterial Blight in Rice": "Rice___Leaf_Blight",
+    "Brownspot": "Rice___Brown_Spot",
+    "Rice Blast": "Rice___Blast",
+    "Tungro": "Rice___Tungro",
+    # Wheat
+    "Flag Smut": "Wheat___Flag_Smut",
+    "Healthy Wheat": "Wheat___Healthy",
+    "Leaf smut": "Wheat___Leaf_Smut",
+    "Wheat Brown leaf Rust": "Wheat___Leaf_Rust",
+    "Wheat Stem fly": "Wheat___Stem_Fly",
+    "Wheat aphid": "Wheat___Aphid",
+    "Wheat black rust": "Wheat___Black_Rust",
+    "Wheat leaf blight": "Wheat___Leaf_Blight",
+    "Wheat mite": "Wheat___Mite",
+    "Wheat powdery mildew": "Wheat___Powdery_Mildew",
+    "Wheat scab": "Wheat___Scab",
+    "Wheat___Yellow_Rust": "Wheat___Yellow_Rust",
+    # Maize
+    "Common_Rust": "Maize___Common_Rust",
+    "Gray_Leaf_Spot": "Maize___Gray_Leaf_Spot",
+    "Healthy Maize": "Maize___Healthy",
+    "Army worm": "Maize___Armyworm",
+    "maize ear rot": "Maize___Ear_Rot",
+    "maize fall armyworm": "Maize___Fall_Armyworm",
+    "maize stem borer": "Maize___Stem_Borer",
+    # Cotton
+    "American Bollworm on Cotton": "Cotton___American_Bollworm",
+    "Anthracnose on Cotton": "Cotton___Anthracnose",
+    "Cotton Aphid": "Cotton___Aphid",
+    "Healthy cotton": "Cotton___Healthy",
+    "Leaf Curl": "Cotton___Leaf_Curl",
+    "bacterial_blight in Cotton": "Cotton___Bacterial_Blight",
+    "bollrot on Cotton": "Cotton___Boll_Rot",
+    "bollworm on Cotton": "Cotton___Bollworm",
+    "cotton mealy bug": "Cotton___Mealy_Bug",
+    "cotton whitefly": "Cotton___Whitefly",
+    "pink bollworm in cotton": "Cotton___Pink_Bollworm",
+    "red cotton bug": "Cotton___Red_Bug",
+    "thirps on  cotton": "Cotton___Thrips",
+    "Wilt": "Cotton___Wilt",
+    # Sugarcane
+    "Mosaic sugarcane": "Sugarcane___Mosaic",
+    "RedRot sugarcane": "Sugarcane___Red_Rot",
+    "RedRust sugarcane": "Sugarcane___Red_Rust",
+    "Sugarcane Healthy": "Sugarcane___Healthy",
+    "Yellow Rust Sugarcane": "Sugarcane___Yellow_Rust",
+    # Tomato — direct matches in DB already
+    # Potato — direct matches in DB already
+}
+
+
 def _match_class_to_disease(class_name: str) -> str:
     """
-    Match a dataset class name (e.g. 'Tomato___Late_blight')
-    to a DISEASE_DATABASE key (e.g. 'Tomato___Late_Blight').
+    Match a dataset class name (e.g. 'Brownspot', 'American Bollworm on Cotton')
+    to a DISEASE_DATABASE key (e.g. 'Rice___Brown_Spot', 'Cotton___American_Bollworm').
     """
-    # Direct match
+    # 1. Exact match in explicit mapping
+    if class_name in CLASS_NAME_TO_DB_KEY:
+        return CLASS_NAME_TO_DB_KEY[class_name]
+
+    # 2. Direct match in database
     if class_name in DISEASE_DATABASE:
         return class_name
 
-    # Lowercase comparison
+    # 3. Lowercase comparison
     lower_map = {k.lower().replace(" ", "_"): k for k in DISEASE_DATABASE}
     normalised = class_name.lower().replace(" ", "_")
 
     if normalised in lower_map:
         return lower_map[normalised]
 
-    # Fuzzy: crop___disease matching
+    # 4. Fuzzy: crop___disease matching
     parts = class_name.split("___")
     if len(parts) == 2:
         crop, disease = parts

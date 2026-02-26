@@ -6,7 +6,7 @@ AI-powered crop disease detection system for Indian agriculture. Upload a leaf i
 
 - **Image-based disease detection** — CNN model (MobileNetV2) identifies diseases from leaf photos
 - **Smart treatment recommendations** — Organic + chemical solutions with Indian brand names and dosage per acre
-- **25+ diseases covered** — Rice, Wheat, Tomato, Potato, Cotton, Maize, Sugarcane
+- **42 diseases & pests covered** — Rice, Wheat, Tomato, Potato, Cotton, Maize, Sugarcane
 - **Prediction history** — Save and review past analyses (requires login)
 - **JWT authentication** — Secure register/login system
 - **Demo mode** — Works without a trained model (returns realistic sample results)
@@ -18,7 +18,7 @@ AI-powered crop disease detection system for Indian agriculture. Upload a leaf i
 | Frontend | React 19, MUI, React Router, Axios |
 | Backend | FastAPI, Motor (async MongoDB), PyJWT |
 | Database | MongoDB |
-| ML | TensorFlow/Keras, MobileNetV2 (transfer learning) |
+| ML | PyTorch, MobileNetV2 (transfer learning) |
 | Deploy | Docker, Docker Compose |
 
 ## 📁 Project Structure
@@ -122,33 +122,23 @@ curl -X POST http://localhost:8000/api/predict \
 }
 ```
 
-## 🌾 Supported Crops & Diseases
+## 🌾 Supported Crops & Diseases (42 Classes)
 
-| Crop | Diseases |
+| Crop | Diseases & Pests |
 |------|----------|
-| Rice | Blast, Brown Spot, Bacterial Leaf Blight |
-| Wheat | Leaf Rust, Powdery Mildew |
+| Rice | Blast, Brown Spot, Bacterial Leaf Blight, Tungro |
+| Wheat | Leaf Rust, Powdery Mildew, Flag Smut, Leaf Smut, Black Rust, Yellow Rust, Leaf Blight, Scab, Stem Fly, Aphid, Mite |
 | Tomato | Late Blight, Early Blight, Leaf Curl Virus, Septoria |
 | Potato | Late Blight, Early Blight |
-| Cotton | Bacterial Blight, Leaf Curl Virus |
-| Maize | Northern Leaf Blight, Common Rust |
-| Sugarcane | Red Rot, Smut |
+| Cotton | Bacterial Blight, Leaf Curl, Anthracnose, American Bollworm, Bollworm, Pink Bollworm, Aphid, Whitefly, Mealy Bug, Thrips, Boll Rot, Red Bug, Wilt |
+| Maize | Northern Leaf Blight, Common Rust, Gray Leaf Spot, Armyworm, Fall Armyworm, Ear Rot, Stem Borer |
+| Sugarcane | Red Rot, Smut, Mosaic, Red Rust, Yellow Rust |
 
-## 📊 Dataset Structure
+## 📊 Dataset
 
-```
-dataset/
-├── train/
-│   ├── Rice___Blast/
-│   ├── Rice___Brown_Spot/
-│   ├── Rice___Healthy/
-│   ├── Tomato___Late_Blight/
-│   └── ...
-├── val/
-└── test/
-```
-
-Use PlantVillage dataset + Indian crop supplements. 80/10/10 split.
+- **20K+ Multi-Class Crop Disease Images** (42 classes)
+- Pre-split Train/Validation folders
+- Trained with PyTorch MobileNetV2 transfer learning
 
 ## 📝 License
 
