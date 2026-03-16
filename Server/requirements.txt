@@ -11,6 +11,6 @@ pillow>=10.2.0
 numpy>=1.26.0
 
 # ML — PyTorch (CPU-only for inference)
-# Install with: pip install torch --index-url https://download.pytorch.org/whl/cpu
+# Install with: pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
 torch>=2.2.0
-
+torchvision>=0.17.0

@@ -7,6 +7,11 @@ on uploaded images.  Falls back to demo mode when no model file is present.
 The model is trained via notebooks/train_model.ipynb and exported as:
   - model/crop_disease_model.pt    (TorchScript model)
   - model/class_map.json           (index → class name)
+
+Alternatively, after training, the notebook also saves:
+  - notebooks/best_model.pth       (state dict weights)
+  - notebooks/export/crop_disease_model.pt  (TorchScript)
+  - notebooks/export/class_map.json
 """
 
 import io
@@ -37,6 +42,105 @@ IMG_SIZE = (224, 224)
 IMAGENET_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
 IMAGENET_STD = np.array([0.229, 0.224, 0.225], dtype=np.float32)
 
+# Base directory for fallback path resolution
+_BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+
+def _find_class_map() -> Path | None:
+    """Search for class_map.json in known locations."""
+    candidates = [
+        Path(CLASS_MAP_PATH),
+        _BASE_DIR / "model" / "class_map.json",
+        _BASE_DIR / "notebooks" / "export" / "class_map.json",
+    ]
+    for p in candidates:
+        if p.exists():
+            return p
+    return None
+
+
+def _find_model_file() -> Path | None:
+    """
+    Search for a model file in priority order:
+      1. Configured MODEL_PATH (and its .pt variant)
+      2. Server/model/ directory
+      3. Server/notebooks/export/ directory
+      4. Server/notebooks/ directory (best_model.pth state dict)
+    """
+    configured = Path(MODEL_PATH)
+
+    # Check configured path and its .pt variant
+    for candidate in (configured, configured.with_suffix(".pt")):
+        if candidate.exists():
+            return candidate
+
+    # Search in known directories
+    search_dirs = [
+        configured.parent,
+        _BASE_DIR / "model",
+        _BASE_DIR / "notebooks" / "export",
+        _BASE_DIR / "notebooks",
+    ]
+    for directory in search_dirs:
+        if not directory.exists():
+            continue
+        for ext in (".pt", ".pth"):
+            found = sorted(directory.glob(f"*{ext}"))
+            if found:
+                selected = found[0]
+                if len(found) > 1:
+                    logger.info(
+                        f"Multiple model files found in {directory}; using {selected.name}"
+                    )
+                return selected
+
+    return None
+
+
+def _load_torchscript(model_path: Path):
+    """Load a TorchScript (.pt) model."""
+    import torch
+    model = torch.jit.load(str(model_path), map_location="cpu")
+    model.eval()
+    return model
+
+
+def _load_state_dict(model_path: Path):
+    """
+    Load a MobileNetV2 model from a state dict (.pth) file.
+    Reconstructs the same architecture used during training in notebooks/train_model.ipynb.
+    Falls back to 42 classes if the class map is unavailable (dataset has 42 classes).
+    """
+    import torch
+    import torch.nn as nn
+    from torchvision import models
+
+    # weights_only=True prevents arbitrary code execution during unpickling (security)
+    state_dict = torch.load(str(model_path), map_location="cpu", weights_only=True)
+
+    # Infer num_classes from the final linear layer of the saved state dict
+    last_linear_key = "classifier.4.weight"
+    if last_linear_key in state_dict:
+        num_classes = state_dict[last_linear_key].shape[0]
+    else:
+        num_classes = len(_class_map) if _class_map else 42
+        logger.warning(
+            f"Could not infer num_classes from state dict; using {num_classes}"
+        )
+
+    base = models.mobilenet_v2(weights=None)
+    base.classifier = nn.Sequential(
+        nn.Dropout(0.3),
+        nn.Linear(base.last_channel, 256),
+        nn.ReLU(),
+        nn.Dropout(0.2),
+        nn.Linear(256, num_classes),
+    )
+
+    base.load_state_dict(state_dict)
+    base.eval()
+    return base
+
 
 # ── Model Loading ─────────────────────────────────────────────────────
 def load_model():
@@ -46,61 +150,45 @@ def load_model():
     """
     global _model, _class_map
 
-    # Try loading class map
-    class_map_path = Path(CLASS_MAP_PATH)
-    if class_map_path.exists():
+    # ── Load class map ───────────────────────────────────────────
+    class_map_path = _find_class_map()
+    if class_map_path:
         with open(class_map_path) as f:
             _class_map = json.load(f)
-        logger.info(f"Loaded class map with {len(_class_map)} classes")
+        logger.info(f"Loaded class map with {len(_class_map)} classes from {class_map_path}")
+    else:
+        logger.warning("class_map.json not found — class index fallback will be used")
 
-    # ── Find model file (.pt or .h5) ─────────────────────────────
-    model_path = Path(MODEL_PATH)
-
-    # Also check for .pt variant
-    pt_path = model_path.with_suffix(".pt")
-    if pt_path.exists():
-        model_path = pt_path
-    elif not model_path.exists():
-        # Check model directory for any model file
-        model_dir = model_path.parent
-        if model_dir.exists():
-            for ext in (".pt", ".pth", ".h5"):
-                found = list(model_dir.glob(f"*{ext}"))
-                if found:
-                    model_path = found[0]
-                    break
-
-    if not model_path.exists():
-        logger.warning(f"Model file not found at {model_path}. Running in DEMO mode.")
+    # ── Find model file ──────────────────────────────────────────
+    model_path = _find_model_file()
+    if not model_path:
+        logger.warning("No model file found. Running in DEMO mode.")
         return False
+
+    logger.info(f"Loading model from {model_path}")
 
     # ── Load PyTorch model ───────────────────────────────────────
     try:
-        import torch
+        import torch  # noqa: F401 — ensure torch is available
 
-        if model_path.suffix in (".pt", ".pth"):
-            _model = torch.jit.load(str(model_path), map_location="cpu")
-            _model.eval()
-            logger.info(f"✅ PyTorch model loaded from {model_path}")
+        if model_path.suffix == ".pt":
+            # TorchScript model (exported by notebook cell 19)
+            _model = _load_torchscript(model_path)
+            logger.info(f"✅ TorchScript model loaded from {model_path}")
             return True
+
+        if model_path.suffix == ".pth":
+            # Raw state dict (saved by notebook during training as best_model.pth)
+            _model = _load_state_dict(model_path)
+            logger.info(f"✅ State-dict model loaded from {model_path}")
+            return True
+
     except ImportError:
         logger.warning("PyTorch not installed.")
     except Exception as e:
         logger.error(f"Failed to load PyTorch model: {e}")
 
-    # ── Fallback: TensorFlow ─────────────────────────────────────
-    try:
-        import tensorflow as tf
-
-        _model = tf.keras.models.load_model(str(model_path))
-        logger.info(f"✅ TensorFlow model loaded from {model_path}")
-        return True
-    except ImportError:
-        logger.warning("TensorFlow not installed either.")
-    except Exception as e:
-        logger.error(f"Failed to load TF model: {e}")
-
-    logger.warning("No ML framework available. Running in DEMO mode.")
+    logger.warning("Could not load model. Running in DEMO mode.")
     return False
 
 
