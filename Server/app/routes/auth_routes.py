@@ -1,76 +1,34 @@
-"""
-Authentication routes — Register & Login
-"""
-
-from datetime import datetime, timezone
-
 from fastapi import APIRouter, HTTPException, status
-from app.database import get_db
-from app.auth import hash_password, verify_password, create_access_token
-from app.models import RegisterRequest, LoginRequest, AuthResponse
 
-router = APIRouter(prefix="/api", tags=["Authentication"])
+from ..database import get_db
+from ..auth import hash_password, verify_password, create_access_token
+from ..models import RegisterRequest, LoginRequest, TokenResponse
+
+router = APIRouter(tags=["auth"])
 
 
-@router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
-async def register(req: RegisterRequest):
-    """Register a new user."""
+@router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
+async def register(body: RegisterRequest):
     db = get_db()
+    if await db.users.find_one({"email": body.email}):
+        raise HTTPException(status_code=400, detail="Email already registered")
 
-    # Check if email already exists
-    existing = await db.users.find_one({"email": req.email})
-    if existing:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="An account with this email already exists",
-        )
-
-    # Create user document
-    user_doc = {
-        "name": req.name,
-        "email": req.email,
-        "password_hash": hash_password(req.password),
-        "role": "farmer",
-        "created_at": datetime.now(timezone.utc),
+    user = {
+        "name": body.name,
+        "email": body.email,
+        "password": hash_password(body.password),
     }
-
-    result = await db.users.insert_one(user_doc)
-    user_id = str(result.inserted_id)
-
-    token = create_access_token(user_id, req.email, req.name)
-
-    return AuthResponse(
-        token=token,
-        user={
-            "id": user_id,
-            "name": req.name,
-            "email": req.email,
-            "role": "farmer",
-        },
-    )
+    await db.users.insert_one(user)
+    token = create_access_token({"sub": body.email, "name": body.name})
+    return TokenResponse(access_token=token)
 
 
-@router.post("/login", response_model=AuthResponse)
-async def login(req: LoginRequest):
-    """Login and get a JWT token."""
+@router.post("/login", response_model=TokenResponse)
+async def login(body: LoginRequest):
     db = get_db()
+    user = await db.users.find_one({"email": body.email})
+    if not user or not verify_password(body.password, user["password"]):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    user = await db.users.find_one({"email": req.email})
-    if not user or not verify_password(req.password, user["password_hash"]):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email or password",
-        )
-
-    user_id = str(user["_id"])
-    token = create_access_token(user_id, user["email"], user["name"])
-
-    return AuthResponse(
-        token=token,
-        user={
-            "id": user_id,
-            "name": user["name"],
-            "email": user["email"],
-            "role": user.get("role", "farmer"),
-        },
-    )
+    token = create_access_token({"sub": user["email"], "name": user.get("name", "")})
+    return TokenResponse(access_token=token)

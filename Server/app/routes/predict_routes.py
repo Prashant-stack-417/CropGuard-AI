@@ -1,93 +1,75 @@
-"""
-Prediction route — Accept image → Run model → Return result
-"""
-
-import logging
 from datetime import datetime, timezone
-from pathlib import Path
+from typing import Optional
 
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
-from app.auth import get_current_user
-from app.config import ALLOWED_EXTENSIONS, MAX_FILE_SIZE
-from app.database import get_db
-from app.services.ml_service import predict
+from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi.params import Depends
 
-logger = logging.getLogger("cropguard.predict")
+from ..auth import get_optional_user
+from ..database import get_db
+from ..models import PredictResponse, TreatmentInfo
+from ..services import ml_service
 
-router = APIRouter(prefix="/api", tags=["Prediction"])
+router = APIRouter(tags=["prediction"])
+
+ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 
 
-@router.post("/predict")
-async def predict_disease(
+@router.post("/predict", response_model=PredictResponse)
+async def predict(
     file: UploadFile = File(...),
-    current_user=Depends(get_current_user),
+    current_user: Optional[dict] = Depends(get_optional_user),
 ):
-    """
-    Accept a crop leaf image and return disease prediction with treatments.
-    Authentication is optional — unauthenticated users can still predict
-    but results won't be saved to history.
-    """
-    # ── Validate file ─────────────────────────────────────────────────
-    if not file.content_type or not file.content_type.startswith("image/"):
+    # Validate file type
+    if file.content_type not in ALLOWED_CONTENT_TYPES:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="File must be an image (JPEG, PNG, or WEBP)",
+            status_code=422,
+            detail=f"Unsupported file type: {file.content_type}. Use JPEG, PNG or WebP.",
         )
 
-    ext = Path(file.filename or "").suffix.lower()
-    if ext and ext not in ALLOWED_EXTENSIONS:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Unsupported file type '{ext}'. Allowed: {', '.join(ALLOWED_EXTENSIONS)}",
-        )
-
-    # Read and check size
     image_bytes = await file.read()
+
     if len(image_bytes) > MAX_FILE_SIZE:
-        raise HTTPException(
-            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-            detail=f"File too large. Maximum size is {MAX_FILE_SIZE // (1024*1024)} MB",
-        )
+        raise HTTPException(status_code=413, detail="Image too large. Maximum size is 10 MB.")
 
-    if len(image_bytes) == 0:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Uploaded file is empty",
-        )
+    result = ml_service.predict(image_bytes)
 
-    # ── Run prediction ────────────────────────────────────────────────
-    try:
-        result = predict(image_bytes)
-    except Exception as e:
-        logger.error(f"Prediction failed: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Prediction failed. Please try again with a different image.",
-        )
+    if not result or "disease_key" not in result:
+        raise HTTPException(status_code=500, detail="Prediction service returned an invalid result.")
 
-    # ── Save to history (if authenticated) ────────────────────────────
-    prediction_id = None
+    # Persist to history when user is authenticated
     if current_user:
         db = get_db()
-        prediction_doc = {
-            "user_id": current_user["_id"],
-            "crop_name": result["crop_name"],
-            "disease_name": result["disease_name"],
+        history_doc = {
+            "user_email": current_user["sub"],
+            "disease_key": result["disease_key"],
+            "disease_name": result.get("name", result["disease_key"]),
+            "crop": result.get("crop", ""),
             "confidence": result["confidence"],
-            "severity": result["severity"],
-            "status": result["status"],
-            "description": result["description"],
-            "organic_treatment": result["organic_treatment"],
-            "chemical_treatment": result["chemical_treatment"],
-            "dosage": result["dosage"],
-            "prevention": result["prevention"],
-            "filename": file.filename,
-            "created_at": datetime.now(timezone.utc),
+            "severity": result.get("severity", "unknown"),
+            "is_healthy": result.get("is_healthy", False),
+            "image_filename": file.filename or "uploaded_image",
+            "predicted_at": datetime.now(timezone.utc).isoformat(),
         }
-        insert_result = await db.predictions.insert_one(prediction_doc)
-        prediction_id = str(insert_result.inserted_id)
+        await db.predictions.insert_one(history_doc)
 
-    result["prediction_id"] = prediction_id
-    result["created_at"] = datetime.now(timezone.utc).isoformat()
+    treatment_raw = result.get("treatment", {})
+    treatment = TreatmentInfo(
+        organic=treatment_raw.get("organic", []),
+        chemical=treatment_raw.get("chemical", []),
+        dosage_per_acre=treatment_raw.get("dosage_per_acre"),
+        indian_brands=treatment_raw.get("indian_brands", []),
+    )
 
-    return result
+    return PredictResponse(
+        disease_key=result["disease_key"],
+        disease_name=result.get("name", result["disease_key"]),
+        crop=result.get("crop", ""),
+        confidence=result["confidence"],
+        description=result.get("description", ""),
+        symptoms=result.get("symptoms", []),
+        treatment=treatment,
+        prevention=result.get("prevention", []),
+        severity=result.get("severity", "unknown"),
+        is_healthy=result.get("is_healthy", False),
+    )

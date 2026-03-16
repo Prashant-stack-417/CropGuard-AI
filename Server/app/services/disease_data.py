@@ -1,1683 +1,1397 @@
 """
-Indian Crop Disease Knowledge Base
------------------------------------
-Comprehensive disease data for 7 major Indian crops with Indian-market
-chemical treatments, organic solutions, dosage per acre, and prevention.
+42-class crop disease catalogue for Indian agriculture.
+Crops: Rice(5), Wheat(5), Tomato(10), Potato(3), Cotton(6), Maize(5), Sugarcane(8)
 """
 
-DISEASE_DATABASE = {
-    # ═══════════════════════════════════════════════════════════════════
-    #   RICE
-    # ═══════════════════════════════════════════════════════════════════
-    "Rice___Blast": {
-        "disease_name": "Rice Blast",
+DISEASE_CATALOGUE: dict[str, dict] = {
+
+    # ─────────────────── RICE (5) ───────────────────
+
+    "rice_bacterial_blight": {
+        "name": "Rice Bacterial Blight",
         "crop": "Rice",
+        "description": "Bacterial blight (Xanthomonas oryzae pv. oryzae) is one of the most destructive rice diseases, causing water-soaked lesions that turn yellow-white and progress from leaf tips and margins inward.",
         "symptoms": [
-            "Diamond-shaped lesions on leaves with grey centers",
-            "Brown borders around leaf spots",
-            "Neck rot causing panicle breakage",
-            "White to grey lesions on nodes",
+            "Water-soaked to yellowish stripes on leaf margins",
+            "Lesions enlarge turning white to yellow",
+            "Wilting and drying of infected tissues",
+            "Kresek phase: complete wilting of young plants",
+            "Milky or yellow bacterial ooze from cut tissue",
         ],
-        "cause": "Fungus Magnaporthe oryzae, spread by wind-borne spores in humid conditions (25–28°C)",
-        "description": "Rice blast is one of the most devastating diseases of rice in India, capable of destroying an entire crop in severe cases. The fungus attacks leaves, nodes, and panicles, reducing grain filling and causing significant yield loss up to 70–80% in susceptible varieties.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Apply neem oil spray (5 ml/litre of water) at 10-day intervals",
-            "Use Trichoderma viride bio-fungicide (4 g/litre) as seed treatment and foliar spray",
-            "Spray Pseudomonas fluorescens (10 g/litre) at tillering and panicle initiation stages",
-            "Maintain proper spacing to allow air circulation",
-        ],
-        "chemical_treatment": [
-            "Tricyclazole 75% WP (Baan/Beam) — 0.6 g/litre foliar spray",
-            "Isoprothiolane 40% EC (Fujione) — 1.5 ml/litre",
-            "Carbendazim 50% WP (Bavistin) — 1 g/litre as preventive spray",
-            "Kasugamycin 3% SL (Kasu-B) — 2 ml/litre at first symptom appearance",
-        ],
-        "dosage": "Tricyclazole: 300 g/acre in 200 litres of water. Spray at boot-leaf and heading stage. Repeat after 15 days if needed.",
+        "treatment": {
+            "organic": [
+                "Remove and destroy infected plant debris",
+                "Spray 1% Bordeaux mixture (10 g copper sulphate + 10 g lime per litre)",
+                "Apply neem cake @ 250 kg/acre as soil amendment",
+            ],
+            "chemical": [
+                "Copper oxychloride 50% WP @ 3 g/litre — spray at 15-day intervals",
+                "Streptocycline 90% SP @ 0.5 g + Copper oxychloride 50% WP @ 3 g per litre",
+                "Kasugamycin 3% SL @ 2 ml/litre at early infection stage",
+            ],
+            "dosage_per_acre": "200–250 litres spray solution per acre",
+            "indian_brands": ["Blitox (Bayer)", "Kasu-B (Dhanuka)", "Plantomycin (Aries)"],
+        },
         "prevention": [
-            "Use blast-resistant varieties (Pusa Basmati 1509, IR64)",
+            "Use certified disease-free seeds",
+            "Grow resistant varieties: IR-64, Pusa Basmati-1, ADT-43",
             "Avoid excess nitrogen fertilisation",
-            "Maintain field sanitation — remove crop residues",
-            "Ensure proper water management — avoid drought stress",
-            "Treat seeds with Carbendazim (2 g/kg seed) before sowing",
+            "Maintain proper field drainage",
+            "Follow crop rotation with non-host crops",
         ],
+        "severity": "high",
+        "is_healthy": False,
     },
-    "Rice___Brown_Spot": {
-        "disease_name": "Rice Brown Spot",
+
+    "rice_brown_spot": {
+        "name": "Rice Brown Spot",
         "crop": "Rice",
+        "description": "Caused by Bipolaris oryzae, brown spot produces circular to oval brown lesions on leaves, sheaths and grains. It is favoured by nutrient-deficient soils and humid conditions.",
         "symptoms": [
-            "Oval brown spots on leaves with grey centres",
-            "Dark brown spots on leaf sheaths and glumes",
-            "Poor grain filling with discoloured grains",
-            "Seedling blight in nursery beds",
+            "Small, circular to oval brown spots with yellow halo on leaves",
+            "Lesion centres may be grey or whitish",
+            "Heavy infection causes leaf drying",
+            "Dark brown discolouration on glumes (grain discolouration)",
+            "Seedling blight in nursery",
         ],
-        "cause": "Fungus Bipolaris oryzae (Cochliobolus miyabeanus), favoured by nutrient-deficient soils and temperatures of 25–30°C",
-        "description": "Rice brown spot is associated with mineral-deficient soils, particularly low silicon and potassium. It was the primary cause of the Great Bengal Famine of 1943. The disease causes significant yield reduction through poor grain filling and seed discolouration.",
-        "severity": "Medium",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Apply Pseudomonas fluorescens (10 g/litre) as foliar spray",
-            "Use Trichoderma harzianum (4 g/kg) as seed treatment",
-            "Spray neem kernel extract (5%) at 15-day intervals",
-            "Apply Panchagavya (3%) foliar spray for plant immunity",
-        ],
-        "chemical_treatment": [
-            "Mancozeb 75% WP (Dithane M-45) — 2.5 g/litre",
-            "Carbendazim 50% WP (Bavistin) — 1 g/litre",
-            "Propiconazole 25% EC (Tilt) — 1 ml/litre",
-            "Zineb 75% WP (Indofil Z-78) — 2 g/litre",
-        ],
-        "dosage": "Mancozeb: 500 g/acre in 200 litres of water. Apply at tillering stage and repeat after 15 days.",
+        "treatment": {
+            "organic": [
+                "Seed treatment with Pseudomonas fluorescens @ 10 g/kg seed",
+                "Spray 2% neem oil with 0.1% Teepol (spreader)",
+                "Foliar spray of 2% potassium silicate to strengthen cell walls",
+            ],
+            "chemical": [
+                "Mancozeb 75% WP @ 2.5 g/litre — 2–3 sprays at 10-day intervals",
+                "Tricyclazole 75% WP @ 0.6 g/litre",
+                "Propiconazole 25% EC @ 1 ml/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Dithane M-45 (UPL)", "Tilt (Syngenta)", "Beam (Dow)"],
+        },
         "prevention": [
-            "Apply balanced fertilisation (NPK + micronutrients)",
+            "Apply balanced NPK fertilisers, especially potassium and silicon",
+            "Use healthy certified seeds",
+            "Maintain optimum plant spacing for airflow",
+            "Drain water periodically to reduce humidity",
+        ],
+        "severity": "medium",
+        "is_healthy": False,
+    },
+
+    "rice_leaf_smut": {
+        "name": "Rice Leaf Smut",
+        "crop": "Rice",
+        "description": "Caused by Entyloma oryzae, leaf smut produces small, angular, black powdery spots on both surfaces of rice leaves. The disease is relatively mild but can reduce photosynthetic area.",
+        "symptoms": [
+            "Small angular black spots scattered on leaf surface",
+            "Black powdery spore masses visible on spots",
+            "Spots surrounded by yellow margin",
+            "Mild chlorosis of heavily infected leaves",
+        ],
+        "treatment": {
+            "organic": [
+                "Remove and burn infected leaves",
+                "Spray 1% Bordeaux mixture",
+            ],
+            "chemical": [
+                "Thiram 75% WP seed treatment @ 3 g/kg seed",
+                "Mancozeb 75% WP @ 2 g/litre foliar spray",
+            ],
+            "dosage_per_acre": "150–200 litres spray solution per acre",
+            "indian_brands": ["Captaf (Aries)", "Dithane M-45 (UPL)"],
+        },
+        "prevention": [
+            "Use disease-free seed",
+            "Avoid waterlogging in field",
+            "Apply recommended doses of fertilisers",
+        ],
+        "severity": "low",
+        "is_healthy": False,
+    },
+
+    "rice_neck_blast": {
+        "name": "Rice Neck Blast",
+        "crop": "Rice",
+        "description": "Caused by Magnaporthe oryzae, neck blast attacks the panicle neck node causing it to turn brown and break, leading to partial or complete loss of grain fill (whiteheads).",
+        "symptoms": [
+            "Brown to black lesion at panicle neck node",
+            "Neck breaks easily at infection point",
+            "Partial or total whitehead symptom",
+            "Grain sterility in affected panicles",
+            "Spindle-shaped eye spots on leaves (leaf blast)",
+        ],
+        "treatment": {
+            "organic": [
+                "Silicon-rich soil amendment (silica @ 200 kg/acre) to strengthen stems",
+                "Seed treatment with Trichoderma viride @ 4 g/kg",
+                "Spray 5% fermented butter milk solution at booting stage",
+            ],
+            "chemical": [
+                "Tricyclazole 75% WP @ 0.6 g/litre — spray at booting and heading",
+                "Isoprothiolane 40% EC @ 1.5 ml/litre",
+                "Azoxystrobin 23% SC @ 1 ml/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Beam (Dow)", "Fuji-One (Nippon Soda)", "Amistar (Syngenta)"],
+        },
+        "prevention": [
+            "Grow blast-resistant varieties: Improved Samba Mahsuri, ADT-36, CR Dhan 310",
+            "Avoid excess nitrogen — split nitrogen application",
+            "Maintain field water level to reduce humidity",
+            "Early morning dew removal by rope dragging",
+        ],
+        "severity": "high",
+        "is_healthy": False,
+    },
+
+    "rice_sheath_blight": {
+        "name": "Rice Sheath Blight",
+        "crop": "Rice",
+        "description": "Caused by Rhizoctonia solani, sheath blight is one of the most widespread rice diseases, producing oval to irregular lesions on leaf sheaths with white centres and brown borders.",
+        "symptoms": [
+            "Oval to irregular greenish-grey watersoaked lesions on sheath",
+            "Lesions enlarge with white/grey centre and brown border",
+            "Lesions coalesce causing sheath blight",
+            "Leaves turn yellow, then brown and die",
+            "Sclerotia (brown seed-like structures) on infected tissue",
+        ],
+        "treatment": {
+            "organic": [
+                "Apply Pseudomonas fluorescens @ 2.5 kg/acre as soil drench",
+                "Trichoderma harzianum application in nursery soil",
+                "Avoid dense planting",
+            ],
+            "chemical": [
+                "Hexaconazole 5% EC @ 2 ml/litre",
+                "Validamycin 3% L @ 2.5 ml/litre",
+                "Propiconazole 25% EC @ 1 ml/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Contaf (Bayer)", "Sheathmar (Rallis)", "Tilt (Syngenta)"],
+        },
+        "prevention": [
+            "Reduce plant density — avoid transplanting more than 2 seedlings/hill",
+            "Drain water at tillering stage to harden plants",
+            "Avoid excess nitrogen, especially urea",
+            "Remove and destroy crop debris after harvest",
+        ],
+        "severity": "high",
+        "is_healthy": False,
+    },
+
+    # ─────────────────── WHEAT (5) ───────────────────
+
+    "wheat_brown_rust": {
+        "name": "Wheat Brown Rust",
+        "crop": "Wheat",
+        "description": "Caused by Puccinia triticina, brown rust (leaf rust) is the most common rust disease of wheat, producing small orange-brown pustules predominantly on the upper leaf surface.",
+        "symptoms": [
+            "Small, round to oval orange-brown uredia pustules on upper leaf",
+            "Chlorotic halo around pustules",
+            "Scattered arrangement unlike stem rust",
+            "Telia (black pustules) in late season",
+            "High infection reduces grain weight",
+        ],
+        "treatment": {
+            "organic": [
+                "Garlic extract spray (500 g garlic in 10 litres water) — weekly",
+                "Neem oil 2% with spreader",
+            ],
+            "chemical": [
+                "Propiconazole 25% EC @ 1 ml/litre",
+                "Tebuconazole 25.9% EC @ 1.5 ml/litre",
+                "Mancozeb 75% WP @ 2.5 g/litre as preventive",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Tilt (Syngenta)", "Folicur (Bayer)", "Dithane M-45 (UPL)"],
+        },
+        "prevention": [
+            "Grow resistant varieties: PBW-343, GW-322, HD-2781",
+            "Timely sowing (mid-November) to escape peak rust period",
+            "Avoid excess nitrogen",
+            "Monitor crop regularly from tillering stage",
+        ],
+        "severity": "medium",
+        "is_healthy": False,
+    },
+
+    "wheat_healthy": {
+        "name": "Wheat Healthy",
+        "crop": "Wheat",
+        "description": "The crop is healthy with no signs of disease. Leaves are green, firm and upright with no lesions, pustules or discolouration.",
+        "symptoms": [],
+        "treatment": {
+            "organic": [],
+            "chemical": [],
+            "dosage_per_acre": None,
+            "indian_brands": [],
+        },
+        "prevention": [
+            "Continue balanced fertilisation (NPK as per soil test)",
+            "Maintain proper irrigation at critical stages",
+            "Scout field regularly for early disease signs",
+            "Keep field free of weeds",
+        ],
+        "severity": "none",
+        "is_healthy": True,
+    },
+
+    "wheat_loose_smut": {
+        "name": "Wheat Loose Smut",
+        "crop": "Wheat",
+        "description": "Caused by Ustilago tritici, loose smut replaces the grain with a mass of dark olive-brown teliospores. Infection is systemic — the fungus colonises the embryo of seed and erupts at heading.",
+        "symptoms": [
+            "Entire ear replaced by black smutted mass at heading",
+            "Smut spores blown away leaving bare rachis",
+            "Infected plants head earlier than healthy plants",
+            "Grain formation completely absent",
+        ],
+        "treatment": {
+            "organic": [
+                "Hot water seed treatment: soak seed in water at 52°C for 10 minutes",
+                "Solar heat treatment: wet seed spread in thin layer under sun",
+            ],
+            "chemical": [
+                "Carboxin 37.5% + Thiram 37.5% WS (Vitavax Power) @ 2.5 g/kg seed",
+                "Tebuconazole 2% DS @ 1.5 g/kg seed",
+                "Triadimefon 25% WP @ 1 g/kg seed",
+            ],
+            "dosage_per_acre": "Seed treatment only",
+            "indian_brands": ["Vitavax Power (Chemtura)", "Raxil (Bayer)", "Baytan (Bayer)"],
+        },
+        "prevention": [
+            "Use certified disease-free treated seed every season",
+            "Grow resistant varieties: Raj-4120, NW-1014",
+            "Rogue infected plants before spore dispersal",
+            "Avoid saving seed from infected fields",
+        ],
+        "severity": "high",
+        "is_healthy": False,
+    },
+
+    "wheat_stem_rust": {
+        "name": "Wheat Stem Rust",
+        "crop": "Wheat",
+        "description": "Caused by Puccinia graminis f. sp. tritici, stem rust produces brick-red to dark brown elongated pustules on stems, leaf sheaths and both leaf surfaces. Virulent race Ug99 is a global concern.",
+        "symptoms": [
+            "Elongated brick-red to brown uredial pustules on stems and sheaths",
+            "Pustules rupture epidermis leaving ragged edges",
+            "Stems weaken causing lodging",
+            "Black teliospores in later season",
+            "Severe infection during grain fill causes shrivelled grain",
+        ],
+        "treatment": {
+            "organic": [
+                "Early scouting and removal of heavily infected plants",
+                "Apply wood ash to soil to improve potassium levels",
+            ],
+            "chemical": [
+                "Propiconazole 25% EC @ 1 ml/litre",
+                "Hexaconazole 5% EC @ 2 ml/litre",
+                "Tebuconazole 25.9% EC @ 1 ml/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Tilt (Syngenta)", "Contaf (Bayer)", "Folicur (Bayer)"],
+        },
+        "prevention": [
+            "Grow resistant varieties: HD-2967, K-9107, WH-1142",
+            "Early sowing to avoid peak rust temperatures (15–25°C)",
+            "Avoid dense sowing",
+            "Eradicate alternate host Berberis spp. near fields",
+        ],
+        "severity": "high",
+        "is_healthy": False,
+    },
+
+    "wheat_yellow_rust": {
+        "name": "Wheat Yellow Rust",
+        "crop": "Wheat",
+        "description": "Also called stripe rust, caused by Puccinia striiformis, this disease produces yellow-orange uredial pustules arranged in stripes along leaf veins. It thrives in cooler, humid conditions.",
+        "symptoms": [
+            "Yellow to orange pustules arranged in stripes along leaf veins",
+            "Chlorotic streaks between pustules",
+            "Leaves dry and shred under heavy infection",
+            "Pustules appear on glumes and awns at advanced stages",
+        ],
+        "treatment": {
+            "organic": [
+                "Spray 2% potassium bicarbonate solution to raise leaf pH",
+                "Neem oil 2% + 0.1% spreader weekly",
+            ],
+            "chemical": [
+                "Propiconazole 25% EC @ 1 ml/litre",
+                "Trifloxystrobin 25% + Tebuconazole 50% WG @ 0.5 g/litre",
+                "Mancozeb 75% WP @ 2.5 g/litre preventive spray",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Tilt (Syngenta)", "Nativo (Bayer)", "Dithane M-45 (UPL)"],
+        },
+        "prevention": [
+            "Grow resistant varieties: PBW-621, HD-3086, HI-8498",
+            "Avoid very early sowing",
+            "Closely monitor crop at tillering and jointing",
+            "Reduce relative humidity by proper spacing",
+        ],
+        "severity": "high",
+        "is_healthy": False,
+    },
+
+    # ─────────────────── TOMATO (10) ───────────────────
+
+    "tomato_bacterial_spot": {
+        "name": "Tomato Bacterial Spot",
+        "crop": "Tomato",
+        "description": "Caused by Xanthomonas vesicatoria, bacterial spot produces small water-soaked lesions on leaves, stems and fruit that turn dark brown and are surrounded by yellow halos.",
+        "symptoms": [
+            "Small, water-soaked circular spots on leaves",
+            "Spots turn dark brown with yellow halo",
+            "Spots with irregular margins on fruit",
+            "Raised, scab-like lesions on green fruit",
+            "Defoliation under heavy infection",
+        ],
+        "treatment": {
+            "organic": [
+                "Spray copper sulphate 1% (Bordeaux mixture) every 7–10 days",
+                "Garlic-chilli extract spray (500 g garlic + 250 g chilli per 10 litres)",
+            ],
+            "chemical": [
+                "Copper oxychloride 50% WP @ 3 g/litre",
+                "Streptocycline 90% SP @ 0.5 g/litre + Copper oxychloride",
+                "Kasugamycin 3% SL @ 2 ml/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Blitox (Bayer)", "Kocide (Dow)", "Kasu-B (Dhanuka)"],
+        },
+        "prevention": [
+            "Use disease-free certified transplants",
+            "Avoid overhead irrigation",
+            "Remove and destroy infected plant debris",
+            "Practice 2-year crop rotation",
+        ],
+        "severity": "medium",
+        "is_healthy": False,
+    },
+
+    "tomato_early_blight": {
+        "name": "Tomato Early Blight",
+        "crop": "Tomato",
+        "description": "Caused by Alternaria solani, early blight produces characteristic concentric ring (target-board) lesions on older leaves, stems and fruit. It thrives in warm, humid conditions.",
+        "symptoms": [
+            "Dark brown spots with concentric rings (target pattern) on old leaves",
+            "Yellow halo surrounds lesions",
+            "Defoliation from bottom upwards",
+            "Dark, sunken lesions at stem end of fruit",
+            "Collar rot at soil line of seedlings",
+        ],
+        "treatment": {
+            "organic": [
+                "Remove infected lower leaves immediately",
+                "Spray 1% Bordeaux mixture",
+                "Neem oil 3% + 0.1% wetting agent weekly",
+            ],
+            "chemical": [
+                "Mancozeb 75% WP @ 2.5 g/litre",
+                "Chlorothalonil 75% WP @ 2 g/litre",
+                "Azoxystrobin 23% SC @ 1 ml/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Dithane M-45 (UPL)", "Kavach (Syngenta)", "Amistar (Syngenta)"],
+        },
+        "prevention": [
+            "Plant resistant varieties: Arka Rakshak, Pusa Ruby",
+            "Mulch to prevent soil splash",
+            "Use drip irrigation instead of overhead",
+            "Maintain proper plant spacing",
+            "Apply balanced calcium nutrition",
+        ],
+        "severity": "medium",
+        "is_healthy": False,
+    },
+
+    "tomato_healthy": {
+        "name": "Tomato Healthy",
+        "crop": "Tomato",
+        "description": "The crop is healthy with no visible signs of disease. Leaves are dark green, firm and free of lesions, spots or discolouration.",
+        "symptoms": [],
+        "treatment": {
+            "organic": [],
+            "chemical": [],
+            "dosage_per_acre": None,
+            "indian_brands": [],
+        },
+        "prevention": [
+            "Continue regular monitoring for early pest/disease signs",
+            "Maintain drip irrigation schedule",
+            "Apply balanced fertilisation based on crop stage",
+            "Scout for whitefly, thrips, mites weekly",
+        ],
+        "severity": "none",
+        "is_healthy": True,
+    },
+
+    "tomato_late_blight": {
+        "name": "Tomato Late Blight",
+        "crop": "Tomato",
+        "description": "Caused by Phytophthora infestans, late blight is a devastating disease that can destroy entire fields within days under cool, moist conditions. Water-soaked lesions rapidly turn brown-black.",
+        "symptoms": [
+            "Large water-soaked, irregular dark green-brown lesions on leaves",
+            "White sporulation (fuzzy growth) on underside of lesions",
+            "Rapid browning and death of affected tissue",
+            "Dark brown to black greasy lesions on fruit",
+            "Entire plant can collapse within 2–3 days",
+        ],
+        "treatment": {
+            "organic": [
+                "Spray 1% Bordeaux mixture as preventive",
+                "Remove and destroy infected plant material immediately",
+                "Spray potassium bicarbonate 5 g/litre",
+            ],
+            "chemical": [
+                "Metalaxyl 8% + Mancozeb 64% WP @ 2.5 g/litre",
+                "Cymoxanil 8% + Mancozeb 64% WP @ 3 g/litre",
+                "Propamocarb 72.2% SL @ 2.5 ml/litre",
+            ],
+            "dosage_per_acre": "200–250 litres spray solution per acre",
+            "indian_brands": ["Ridomil Gold (Syngenta)", "Curzate (DuPont)", "Previcur (Bayer)"],
+        },
+        "prevention": [
+            "Avoid late planting during monsoon/cool humid period",
+            "Ensure good air circulation with proper staking",
+            "Avoid overhead irrigation",
+            "Scout daily when weather is cool and wet",
+            "Use resistant varieties where available",
+        ],
+        "severity": "high",
+        "is_healthy": False,
+    },
+
+    "tomato_leaf_mold": {
+        "name": "Tomato Leaf Mold",
+        "crop": "Tomato",
+        "description": "Caused by Passalora fulva (syn. Cladosporium fulvum), leaf mold primarily affects greenhouse tomatoes. Pale yellow patches appear on upper leaf surface with olive-green to brown mold beneath.",
+        "symptoms": [
+            "Pale yellow-green patches on upper leaf surface",
+            "Olive-green to brown velvety mold on lower leaf surface",
+            "Leaves curl upward and wither",
+            "Fruit infection rare but results in leathery black lesions",
+        ],
+        "treatment": {
+            "organic": [
+                "Improve ventilation to reduce humidity below 85%",
+                "Remove and destroy infected leaves",
+                "Spray 2% baking soda (sodium bicarbonate) solution",
+            ],
+            "chemical": [
+                "Chlorothalonil 75% WP @ 2 g/litre",
+                "Mancozeb 75% WP @ 2.5 g/litre",
+                "Myclobutanil 10% WP @ 1 g/litre",
+            ],
+            "dosage_per_acre": "150–200 litres spray solution per acre",
+            "indian_brands": ["Kavach (Syngenta)", "Dithane M-45 (UPL)", "Index (Aries)"],
+        },
+        "prevention": [
+            "Grow resistant varieties",
+            "Maintain greenhouse humidity below 85%",
+            "Space plants adequately for airflow",
+            "Avoid wetting leaves during irrigation",
+        ],
+        "severity": "medium",
+        "is_healthy": False,
+    },
+
+    "tomato_mosaic_virus": {
+        "name": "Tomato Mosaic Virus",
+        "crop": "Tomato",
+        "description": "Tomato Mosaic Virus (ToMV) causes mottled light and dark green patterns on leaves, leaf distortion and stunting. It spreads through contact with contaminated tools, hands and infected plant material.",
+        "symptoms": [
+            "Mosaic (mottled light-dark green) pattern on leaves",
+            "Leaf curling and distortion",
+            "Plant stunting",
+            "Reduced fruit set and deformed fruit",
+            "Internal browning of fruit in some strains",
+        ],
+        "treatment": {
+            "organic": [
+                "Remove and destroy infected plants",
+                "Spray neem oil 5% to control aphid vectors",
+                "Wash tools with soap water between plants",
+            ],
+            "chemical": [
+                "No curative chemical available for viruses",
+                "Control aphid vectors: Imidacloprid 17.8% SL @ 0.5 ml/litre",
+                "Thiamethoxam 25% WG @ 0.4 g/litre for vector control",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Confidor (Bayer)", "Actara (Syngenta)"],
+        },
+        "prevention": [
+            "Use ToMV-resistant varieties: Pusa Hybrid-4, Arka Rakshak",
+            "Disinfect tools with 10% bleach or 70% alcohol",
+            "Wash hands before handling plants",
+            "Control aphids and thrips with systemic insecticides",
+            "Remove rogues immediately",
+        ],
+        "severity": "medium",
+        "is_healthy": False,
+    },
+
+    "tomato_septoria_leaf_spot": {
+        "name": "Tomato Septoria Leaf Spot",
+        "crop": "Tomato",
+        "description": "Caused by Septoria lycopersici, septoria leaf spot produces numerous small circular spots with white centres and dark borders, mainly on lower leaves. Severe infection causes defoliation.",
+        "symptoms": [
+            "Numerous small, circular spots (3–6 mm) with light grey/white centres",
+            "Dark brown margins around spots",
+            "Tiny black dots (pycnidia) visible in lesion centres",
+            "Progressive defoliation from lower leaves upward",
+            "No fruit infection",
+        ],
+        "treatment": {
+            "organic": [
+                "Remove infected lower leaves promptly",
+                "Spray copper-based fungicide (Bordeaux mixture 1%)",
+                "Mulch soil to prevent spore splash",
+            ],
+            "chemical": [
+                "Mancozeb 75% WP @ 2.5 g/litre",
+                "Chlorothalonil 75% WP @ 2 g/litre",
+                "Copper oxychloride 50% WP @ 3 g/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Dithane M-45 (UPL)", "Kavach (Syngenta)", "Blitox (Bayer)"],
+        },
+        "prevention": [
             "Use certified disease-free seed",
-            "Apply silicon-based fertilisers to strengthen plant cells",
-            "Avoid prolonged flooding — maintain alternate wetting and drying",
-            "Seed treatment with Carbendazim (2 g/kg seed)",
+            "Apply mulch to reduce soil splash",
+            "Stake plants for good air circulation",
+            "Avoid working in wet fields",
+            "Crop rotation with non-solanaceous crops",
         ],
-    },
-    "Rice___Leaf_Blight": {
-        "disease_name": "Rice Bacterial Leaf Blight",
-        "crop": "Rice",
-        "symptoms": [
-            "Water-soaked lesions starting from leaf tips and margins",
-            "Yellowish-white streaks along leaf veins",
-            "Leaves dry up and turn greyish-white",
-            "Bacterial ooze visible on leaves in early morning",
-        ],
-        "cause": "Bacterium Xanthomonas oryzae pv. oryzae, spread through rain splash and contaminated irrigation water",
-        "description": "Bacterial leaf blight is one of the most serious rice diseases in South and Southeast Asia. It can cause yield losses of 20–50% in severe epidemics. The disease is particularly destructive during the kharif season in flooded paddies.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Spray Pseudomonas fluorescens (10 g/litre) at 10-day intervals",
-            "Apply neem oil (5 ml/litre) mixed with copper-based organic formulation",
-            "Use Bacillus subtilis-based bio-pesticide (5 g/litre)",
-            "Foliar spray of turmeric extract (5%) as a natural bactericide",
-        ],
-        "chemical_treatment": [
-            "Streptomycin sulphate + Tetracycline (Streptocycline) — 0.5 g + Copper oxychloride 2.5 g/litre",
-            "Copper hydroxide 77% WP (Kocide) — 2 g/litre",
-            "Copper oxychloride 50% WP (Blitox) — 2.5 g/litre",
-        ],
-        "dosage": "Streptocycline 6 g + Copper oxychloride 500 g per acre in 200 litres of water. Spray at first symptom and repeat after 10 days.",
-        "prevention": [
-            "Use resistant varieties (Improved Samba Mahsuri, Swarna)",
-            "Avoid excess nitrogen — use balanced NPK",
-            "Drain excess standing water from fields",
-            "Avoid clipping leaves during transplanting",
-            "Disinfect tools and avoid working in wet fields",
-        ],
-    },
-    "Rice___Healthy": {
-        "disease_name": "Healthy",
-        "crop": "Rice",
-        "symptoms": [],
-        "cause": "No disease detected",
-        "description": "Your rice plant looks healthy! The leaves show normal green coloration with no signs of infection, spots, or lesions. Continue with your current crop management practices to maintain plant health.",
-        "severity": "None",
-        "spread_risk": "None",
-        "organic_treatment": [
-            "Continue regular neem oil spray (3 ml/litre) as a preventive measure",
-            "Apply Panchagavya (3%) foliar spray once a month for plant vitality",
-            "Maintain mulching with organic matter to improve soil health",
-        ],
-        "chemical_treatment": [
-            "No chemical treatment needed",
-            "Optional preventive spray of Mancozeb (1.5 g/litre) before monsoon season",
-        ],
-        "dosage": "No treatment dosage needed. For preventive Mancozeb: 300 g/acre in 200 litres of water.",
-        "prevention": [
-            "Maintain balanced NPK fertilisation",
-            "Ensure proper water management — alternate wetting and drying",
-            "Monitor fields regularly for early signs of pest or disease",
-            "Rotate crops with pulses to maintain soil health",
-        ],
+        "severity": "medium",
+        "is_healthy": False,
     },
 
-    # ═══════════════════════════════════════════════════════════════════
-    #   WHEAT
-    # ═══════════════════════════════════════════════════════════════════
-    "Wheat___Leaf_Rust": {
-        "disease_name": "Wheat Leaf Rust",
-        "crop": "Wheat",
+    "tomato_spider_mites": {
+        "name": "Tomato Spider Mites",
+        "crop": "Tomato",
+        "description": "Two-spotted spider mite (Tetranychus urticae) causes stippling, bronzing and webbing on tomato leaves. Severe infestations lead to leaf scorch and significant yield loss in dry conditions.",
         "symptoms": [
-            "Small, round, orange-brown pustules on upper leaf surface",
-            "Pustules scattered randomly on leaves",
-            "Premature leaf drying in severe cases",
-            "Reduced ear head size and grain shrivelling",
+            "Fine stippling (tiny white/yellow dots) on upper leaf surface",
+            "Bronzing or silvering of affected leaves",
+            "Fine webbing on undersides of leaves",
+            "Tiny red-brown mites visible with hand lens",
+            "Leaf drop under severe infestation",
         ],
-        "cause": "Fungus Puccinia triticina, spread by wind-borne uredospores over long distances",
-        "description": "Leaf rust (brown rust) is the most common wheat rust in India, appearing annually in the Indo-Gangetic plains. It reduces photosynthetic area leading to 15–30% yield loss. The disease is favour by temperatures of 15–22°C with high humidity.",
-        "severity": "Medium",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Spray neem oil (5 ml/litre) at early pustule stage",
-            "Apply Trichoderma viride (4 g/litre) as preventive foliar spray",
-            "Use buttermilk spray (10%) as a natural fungicide — traditional remedy",
-            "Remove and destroy heavily infected leaves",
-        ],
-        "chemical_treatment": [
-            "Propiconazole 25% EC (Tilt) — 1 ml/litre",
-            "Tebuconazole 25.9% EC (Folicur) — 1 ml/litre",
-            "Mancozeb 75% WP (Dithane M-45) — 2.5 g/litre",
-            "Triadimefon 25% WP (Bayleton) — 1 g/litre",
-        ],
-        "dosage": "Propiconazole: 200 ml/acre in 200 litres of water. Spray at flag-leaf stage when first pustules appear. One spray usually sufficient.",
+        "treatment": {
+            "organic": [
+                "Spray neem oil 3% + 0.1% spreader every 5–7 days",
+                "Spray soap solution (5 g soap per litre) under leaf surface",
+                "Release predatory mites: Phytoseiulus persimilis",
+            ],
+            "chemical": [
+                "Abamectin 1.9% EC @ 0.5 ml/litre",
+                "Hexythiazox 5.45% EC @ 1 ml/litre",
+                "Spiromesifen 22.9% SC @ 1 ml/litre",
+                "Fenazaquin 10% EC @ 2 ml/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Vertimec (Syngenta)", "Nissoran (Bayer)", "Oberon (Bayer)", "Magister (Aries)"],
+        },
         "prevention": [
-            "Grow rust-resistant varieties (HD 3086, DBW 187, PBW 725)",
-            "Timely sowing — avoid late planting",
-            "Monitor fields from January onwards in North India",
-            "Avoid excessive nitrogen — promotes lush growth susceptible to rust",
+            "Avoid excess nitrogen that promotes soft growth",
+            "Maintain adequate soil moisture with irrigation",
+            "Avoid broad-spectrum insecticide overuse (kills predators)",
+            "Remove heavily infested leaves and destroy",
+            "Monitor undersides of leaves regularly",
         ],
-    },
-    "Wheat___Powdery_Mildew": {
-        "disease_name": "Wheat Powdery Mildew",
-        "crop": "Wheat",
-        "symptoms": [
-            "White powdery patches on upper leaf surface",
-            "Patches later turn grey-brown with black fruiting bodies",
-            "Stunted growth and reduced tillering",
-            "Premature leaf senescence",
-        ],
-        "cause": "Fungus Blumeria graminis f. sp. tritici, spread by wind and favoured by cool humid weather (15–22°C)",
-        "description": "Powdery mildew can cause 15–20% yield reduction in wheat. It is common in irrigated wheat in northern India, especially in areas with dense canopy and high humidity. The fungus directly reduces photosynthesis and grain size.",
-        "severity": "Medium",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Spray milk solution (1:10 dilution with water) on affected leaves",
-            "Apply potassium bicarbonate (3 g/litre) as foliar spray",
-            "Use sulphur-based organic formulation (3 g/litre)",
-            "Neem oil spray (5 ml/litre) at 10-day intervals",
-        ],
-        "chemical_treatment": [
-            "Karathane 48% EC (Dinocap) — 1 ml/litre",
-            "Propiconazole 25% EC (Tilt) — 1 ml/litre",
-            "Sulfex (Wettable Sulphur) 80% WP — 3 g/litre",
-            "Triadimefon 25% WP (Bayleton) — 1 g/litre",
-        ],
-        "dosage": "Sulfex: 600 g/acre in 200 litres of water. Apply at first sign of powdery growth. Repeat after 15 days if disease persists.",
-        "prevention": [
-            "Avoid excess irrigation — allow topsoil to dry between waterings",
-            "Ensure proper plant spacing for air circulation",
-            "Grow resistant varieties where available",
-            "Avoid heavy nitrogen doses in late season",
-        ],
-    },
-    "Wheat___Healthy": {
-        "disease_name": "Healthy",
-        "crop": "Wheat",
-        "symptoms": [],
-        "cause": "No disease detected",
-        "description": "Your wheat plant appears healthy with no visible signs of disease. The leaves show normal green colour and there are no lesions, spots, or fungal growth observed.",
-        "severity": "None",
-        "spread_risk": "None",
-        "organic_treatment": [
-            "Apply preventive neem oil spray (3 ml/litre) every 2 weeks",
-            "Use vermicompost top-dressing for improved soil biology",
-        ],
-        "chemical_treatment": [
-            "No treatment needed",
-        ],
-        "dosage": "No treatment dosage required.",
-        "prevention": [
-            "Continue balanced fertilisation",
-            "Monitor fields regularly during tillering and heading stages",
-            "Maintain proper irrigation scheduling",
-        ],
+        "severity": "medium",
+        "is_healthy": False,
     },
 
-    # ═══════════════════════════════════════════════════════════════════
-    #   TOMATO
-    # ═══════════════════════════════════════════════════════════════════
-    "Tomato___Late_Blight": {
-        "disease_name": "Tomato Late Blight",
+    "tomato_target_spot": {
+        "name": "Tomato Target Spot",
         "crop": "Tomato",
+        "description": "Caused by Corynespora cassiicola, target spot produces concentric ring lesions similar to early blight but also affects fruit heavily. It is increasingly common in warm, humid regions of India.",
         "symptoms": [
-            "Large, dark brown water-soaked patches on leaves",
-            "White fungal growth on underside of leaves in humid conditions",
-            "Dark brown lesions on stems",
-            "Firm dark spots on green and ripe fruits",
+            "Circular spots with concentric rings on leaves",
+            "Small, dark brown spots on young fruit enlarging to sunken lesions",
+            "Lesions may coalesce causing large necrotic areas",
+            "Affected fruit may have water-soaked appearance",
         ],
-        "cause": "Oomycete Phytophthora infestans, favoured by cool wet weather (15–20°C with high humidity)",
-        "description": "Late blight is the most destructive disease of tomato in India, especially during the rabi season and in hilly regions. It can destroy an entire crop within 7–10 days under favorable conditions. The pathogen also attacks potatoes, making management critical.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Spray Bordeaux mixture (1%) — 10 g copper sulphate + 10 g lime per litre of water",
-            "Apply Trichoderma viride (4 g/litre) as preventive spray before monsoon",
-            "Use Pseudomonas fluorescens (10 g/litre) foliar spray",
-            "Remove and destroy infected plant parts immediately",
-        ],
-        "chemical_treatment": [
-            "Metalaxyl 8% + Mancozeb 64% WP (Ridomil Gold) — 2.5 g/litre",
-            "Cymoxanil 8% + Mancozeb 64% WP (Curzate M8) — 3 g/litre",
-            "Copper oxychloride 50% WP (Blitox) — 2.5 g/litre",
-            "Dimethomorph 50% WP (Acrobat) — 1 g/litre",
-        ],
-        "dosage": "Ridomil Gold: 500 g/acre in 200 litres of water. Spray at first symptom and repeat every 7–10 days during wet weather. Alternate with contact fungicides.",
+        "treatment": {
+            "organic": [
+                "Remove infected leaves and destroy",
+                "Spray Bordeaux mixture 1%",
+            ],
+            "chemical": [
+                "Azoxystrobin 23% SC @ 1 ml/litre",
+                "Difenoconazole 25% EC @ 0.5 ml/litre",
+                "Fluopyram 17.35% + Tebuconazole 17.35% SC @ 0.5 ml/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Amistar (Syngenta)", "Score (Syngenta)", "Luna Experience (Bayer)"],
+        },
         "prevention": [
-            "Use disease-free transplants from certified nurseries",
-            "Provide staking and proper spacing for air circulation",
-            "Avoid overhead irrigation — use drip irrigation",
-            "Apply mulch to prevent soil splash",
-            "Destroy volunteer plants and crop residues after harvest",
+            "Ensure good canopy management",
+            "Avoid high humidity by proper spacing",
+            "Rotate with non-host crops",
         ],
-    },
-    "Tomato___Early_Blight": {
-        "disease_name": "Tomato Early Blight",
-        "crop": "Tomato",
-        "symptoms": [
-            "Dark brown concentric ring spots (target board pattern) on lower leaves",
-            "Yellowing around leaf spots",
-            "Leaf drop starting from bottom of plant",
-            "Dark sunken spots near fruit stem end",
-        ],
-        "cause": "Fungus Alternaria solani, favoured by warm humid conditions (24–29°C) and stressed plants",
-        "description": "Early blight is common across India wherever tomatoes are grown. It starts on older, lower leaves and progresses upward. Yield losses of 20–40% are common. Stressed plants (drought, nutrient deficiency) are more susceptible.",
-        "severity": "Medium",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Spray Trichoderma viride (4 g/litre) starting from transplanting",
-            "Apply neem oil (5 ml/litre) every 10 days",
-            "Use baking soda spray (5 g/litre) as a foliar treatment",
-            "Apply compost tea drench to build soil microbe diversity",
-        ],
-        "chemical_treatment": [
-            "Mancozeb 75% WP (Dithane M-45) — 2.5 g/litre",
-            "Chlorothalonil 75% WP (Kavach) — 2 g/litre",
-            "Azoxystrobin 23% SC (Amistar) — 1 ml/litre",
-            "Carbendazim 12% + Mancozeb 63% WP (SAAF) — 2 g/litre",
-        ],
-        "dosage": "Mancozeb: 500 g/acre in 200 litres of water. Start at first symptom and spray every 10–14 days. Rotate fungicide groups to prevent resistance.",
-        "prevention": [
-            "Use resistant/tolerant varieties (Arka Rakshak, Arka Abhed)",
-            "Maintain adequate nutrition — don't stress plants with hunger",
-            "Use drip irrigation to avoid wetting foliage",
-            "Stake plants and prune lower branches for air flow",
-            "Rotate with non-solanaceous crops for 2–3 seasons",
-        ],
-    },
-    "Tomato___Leaf_Curl": {
-        "disease_name": "Tomato Leaf Curl Virus",
-        "crop": "Tomato",
-        "symptoms": [
-            "Upward curling and cupping of leaves",
-            "Thickened, leathery leaf texture",
-            "Stunted plant growth with short internodes",
-            "Yellow margins on curled leaves",
-            "Flowers drop without fruit set",
-        ],
-        "cause": "Tomato Leaf Curl Virus (ToLCV), transmitted by whitefly (Bemisia tabaci)",
-        "description": "Leaf curl virus is the most economically important tomato disease in India, especially in summer season. Yield losses can reach 80–100% when infection occurs at an early stage. The disease is transmitted by the silverleaf whitefly, which is prevalent across India.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Install yellow sticky traps (12 per acre) to monitor and trap whiteflies",
-            "Spray neem oil (5 ml/litre) every 7 days to repel whiteflies",
-            "Apply Verticillium lecanii (5 g/litre) — a whitefly bio-control agent",
-            "Intercrop with marigold to repel whiteflies",
-            "Uproot and destroy infected plants immediately",
-        ],
-        "chemical_treatment": [
-            "Imidacloprid 17.8% SL (Confidor) — 0.3 ml/litre for whitefly control",
-            "Thiamethoxam 25% WG (Actara) — 0.3 g/litre",
-            "Diafenthiuron 50% WP (Polo) — 1 g/litre",
-            "Spiromesifen 22.9% SC (Oberon) — 0.5 ml/litre for nymphal stages",
-        ],
-        "dosage": "Imidacloprid: 60 ml/acre in 200 litres of water. Spray at seedling stage and repeat every 15 days. Alternate insecticide groups to prevent resistance in whiteflies.",
-        "prevention": [
-            "Use ToLCV-resistant hybrids (Arka Ananya, TH-1, Lakshmi)",
-            "Raise nursery under insect-proof nylon net (40–50 mesh)",
-            "Transplant during cooler months when whitefly is less active",
-            "Remove weeds around fields — whitefly harbours on alternate hosts",
-            "Avoid planting near cotton fields (cotton is a whitefly host)",
-        ],
-    },
-    "Tomato___Septoria_Leaf_Spot": {
-        "disease_name": "Tomato Septoria Leaf Spot",
-        "crop": "Tomato",
-        "symptoms": [
-            "Small circular spots (2–3 mm) with dark brown borders and grey centres",
-            "Tiny black dots (pycnidia) visible in spot centres",
-            "Starts on lower leaves and moves upward",
-            "Severe defoliation in advanced stages",
-        ],
-        "cause": "Fungus Septoria lycopersici, spread by rain splash and overhead irrigation",
-        "description": "Septoria leaf spot causes significant early defoliation of tomato plants. While it rarely infects fruit directly, the loss of foliage results in sunscalded fruit and reduced yields of 30–50%. It is common during humid, rainy seasons.",
-        "severity": "Medium",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Remove and destroy infected lower leaves",
-            "Apply Trichoderma viride (4 g/litre) as preventive spray",
-            "Spray copper-based organic fungicide (Bordeaux mixture 1%)",
-            "Improve air circulation with proper staking and pruning",
-        ],
-        "chemical_treatment": [
-            "Mancozeb 75% WP (Dithane M-45) — 2.5 g/litre",
-            "Chlorothalonil 75% WP (Kavach) — 2 g/litre",
-            "Hexaconazole 5% SC (Contaf) — 1 ml/litre",
-            "Azoxystrobin 23% SC (Amistar) — 1 ml/litre",
-        ],
-        "dosage": "Mancozeb: 500 g/acre in 200 litres. Spray at first symptom, repeat every 10 days. Alternate with systemic fungicide every third application.",
-        "prevention": [
-            "Avoid overhead irrigation — use drip",
-            "Mulch around plants to prevent soil splash",
-            "Remove lower leaves that touch the ground",
-            "Rotate with non-solanaceous crops for 2 years",
-        ],
-    },
-    "Tomato___Healthy": {
-        "disease_name": "Healthy",
-        "crop": "Tomato",
-        "symptoms": [],
-        "cause": "No disease detected",
-        "description": "Your tomato plant looks healthy! The leaves are green with no spots, curling, or unusual markings. Keep up your current management practices.",
-        "severity": "None",
-        "spread_risk": "None",
-        "organic_treatment": ["Continue preventive neem oil spray (3 ml/litre) every 2 weeks"],
-        "chemical_treatment": ["No treatment needed"],
-        "dosage": "No dosage required.",
-        "prevention": [
-            "Monitor for whiteflies using yellow sticky traps",
-            "Maintain proper staking and air circulation",
-            "Use balanced NPK fertilisation",
-        ],
+        "severity": "medium",
+        "is_healthy": False,
     },
 
-    # ═══════════════════════════════════════════════════════════════════
-    #   POTATO
-    # ═══════════════════════════════════════════════════════════════════
-    "Potato___Late_Blight": {
-        "disease_name": "Potato Late Blight",
+    "tomato_yellow_leaf_curl": {
+        "name": "Tomato Yellow Leaf Curl Virus",
+        "crop": "Tomato",
+        "description": "Tomato Yellow Leaf Curl Virus (TYLCV), transmitted by whitefly Bemisia tabaci, causes severe stunting, leaf curling and yellowing. It is one of the most economically destructive tomato diseases in India.",
+        "symptoms": [
+            "Upward curling and yellowing of leaflets",
+            "Leaves crinkle and become thickened",
+            "Severe stunting of the entire plant",
+            "Marked reduction in fruit set",
+            "Abundant whiteflies on leaf undersides",
+        ],
+        "treatment": {
+            "organic": [
+                "No cure — remove and destroy infected plants early",
+                "Yellow sticky traps @ 10 traps/acre to monitor whiteflies",
+                "Spray neem oil 3% to repel whitefly",
+            ],
+            "chemical": [
+                "Imidacloprid 70% WS seed treatment @ 5 g/kg seed",
+                "Thiamethoxam 25% WG @ 0.3 g/litre foliar spray",
+                "Spirotetramat 11.01% + Imidacloprid 11.01% SC @ 1 ml/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Gaucho (Bayer)", "Actara (Syngenta)", "Movento Combi (Bayer)"],
+        },
+        "prevention": [
+            "Grow TYLCV-resistant varieties: CARI Tomato-1, Arka Rakshak, NS-585",
+            "Cover nursery with 40-mesh nylon insect-proof net",
+            "Reflective mulch to repel whiteflies",
+            "Rogue infected plants immediately",
+            "Control whitefly with systemic insecticides",
+        ],
+        "severity": "high",
+        "is_healthy": False,
+    },
+
+    # ─────────────────── POTATO (3) ───────────────────
+
+    "potato_early_blight": {
+        "name": "Potato Early Blight",
         "crop": "Potato",
+        "description": "Caused by Alternaria solani, early blight produces dark brown concentric ring lesions on older leaves and can cause severe defoliation and reduced tuber yield.",
         "symptoms": [
-            "Dark brown water-soaked patches on leaf margins and tips",
-            "White cottony fungal growth on underside of leaves",
-            "Rapid browning and collapse of foliage",
-            "Brown rotting of tubers from surface inwards",
+            "Dark brown to black spots with concentric rings on older leaves",
+            "Yellow halo around lesions",
+            "Progressive defoliation from base upward",
+            "Dark, sunken lesions with concentric rings on tubers",
+            "Collar rot at soil line",
         ],
-        "cause": "Oomycete Phytophthora infestans, favoured by cool wet conditions (12–18°C with high humidity)",
-        "description": "Late blight is historically the single most destructive potato disease worldwide. In India, it is severe in the hills (Shimla, Darjeeling) and plains (UP, West Bengal) during foggy winter periods. It can cause 40–80% crop loss within 2 weeks.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Spray Bordeaux mixture (1%) as preventive before rains",
-            "Apply Trichoderma viride (4 g/litre) foliar spray",
-            "Use Pseudomonas fluorescens (10 g/litre) bio-fungicide",
-            "Hill up soil around stems to protect tubers from spore infection",
-        ],
-        "chemical_treatment": [
-            "Metalaxyl 8% + Mancozeb 64% WP (Ridomil Gold) — 2.5 g/litre",
-            "Cymoxanil 8% + Mancozeb 64% WP (Curzate M8) — 3 g/litre",
-            "Mancozeb 75% WP (Dithane M-45) — 2.5 g/litre (preventive only)",
-            "Fenamidone 10% + Mancozeb 50% WG (Sectin) — 3 g/litre",
-        ],
-        "dosage": "Ridomil Gold: 500 g/acre in 200 litres. Spray at first symptom, repeat every 7 days during wet weather. Alternate systemic and contact fungicides.",
+        "treatment": {
+            "organic": [
+                "Remove infected lower leaves",
+                "Spray 1% Bordeaux mixture at 10-day intervals",
+                "Neem oil 3% spray",
+            ],
+            "chemical": [
+                "Mancozeb 75% WP @ 2.5 g/litre",
+                "Chlorothalonil 75% WP @ 2 g/litre",
+                "Difenoconazole 25% EC @ 0.5 ml/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Dithane M-45 (UPL)", "Kavach (Syngenta)", "Score (Syngenta)"],
+        },
         "prevention": [
             "Use certified disease-free seed tubers",
-            "Plant resistant varieties (Kufri Girdhari, Kufri Khyati)",
-            "Avoid overhead sprinkler irrigation",
-            "Destroy volunteer plants and cull piles",
-            "Apply prophylactic fungicide spray before forecasted foggy/rainy weather",
+            "Use resistant varieties: Kufri Bahar, Kufri Jyoti",
+            "Maintain soil fertility and balanced nutrition",
+            "Avoid overhead irrigation",
         ],
+        "severity": "medium",
+        "is_healthy": False,
     },
-    "Potato___Early_Blight": {
-        "disease_name": "Potato Early Blight",
+
+    "potato_healthy": {
+        "name": "Potato Healthy",
         "crop": "Potato",
-        "symptoms": [
-            "Dark brown concentric ring spots on older leaves (target board pattern)",
-            "Yellowing around spots",
-            "Premature senescence of lower leaves",
-            "Small dark sunken lesions on tuber surface",
-        ],
-        "cause": "Fungus Alternaria solani, favoured by warm days (25–30°C) and cool nights with dew",
-        "description": "Early blight is a chronic disease of potato in India, occurring every season. It reduces photosynthetic area leading to 20–30% yield loss. Nutritionally stressed and older plants are most susceptible.",
-        "severity": "Medium",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Spray neem oil (5 ml/litre) every 10 days",
-            "Apply Trichoderma viride (4 g/litre) foliar application",
-            "Remove and destroy heavily infected lower leaves",
-            "Maintain soil health with compost and humic acid application",
-        ],
-        "chemical_treatment": [
-            "Mancozeb 75% WP (Dithane M-45) — 2.5 g/litre",
-            "Carbendazim 12% + Mancozeb 63% WP (SAAF) — 2 g/litre",
-            "Azoxystrobin 23% SC (Amistar) — 1 ml/litre",
-            "Chlorothalonil 75% WP (Kavach) — 2 g/litre",
-        ],
-        "dosage": "Mancozeb: 500 g/acre in 200 litres. Start at 45 days after planting and repeat every 10–14 days.",
+        "description": "The crop is healthy with no signs of disease. Foliage is green and vigorous with no lesions, wilting or discolouration.",
+        "symptoms": [],
+        "treatment": {
+            "organic": [],
+            "chemical": [],
+            "dosage_per_acre": None,
+            "indian_brands": [],
+        },
         "prevention": [
-            "Use healthy seed tubers from certified sources",
-            "Maintain proper nutrition — don't let plants become hungry",
-            "Irrigation management — avoid alternate drought and flood",
-            "Crop rotation with cereals for 2+ seasons",
+            "Keep monitoring for late blight especially during cool, moist weather",
+            "Maintain earthing-up schedule",
+            "Scout for aphids and whiteflies weekly",
         ],
+        "severity": "none",
+        "is_healthy": True,
     },
-    "Potato___Healthy": {
-        "disease_name": "Healthy",
+
+    "potato_late_blight": {
+        "name": "Potato Late Blight",
         "crop": "Potato",
-        "symptoms": [],
-        "cause": "No disease detected",
-        "description": "Your potato plant looks healthy with normal green foliage and no signs of blight, spots, or viral infection.",
-        "severity": "None",
-        "spread_risk": "None",
-        "organic_treatment": ["Continue preventive care with neem oil spray every 2 weeks"],
-        "chemical_treatment": ["No treatment needed"],
-        "dosage": "No dosage required.",
-        "prevention": [
-            "Monitor for late blight during foggy/dew periods",
-            "Maintain balanced fertilisation",
-            "Earth up tubers properly to prevent greening",
-        ],
-    },
-
-    # ═══════════════════════════════════════════════════════════════════
-    #   COTTON
-    # ═══════════════════════════════════════════════════════════════════
-    "Cotton___Bacterial_Blight": {
-        "disease_name": "Cotton Bacterial Blight",
-        "crop": "Cotton",
+        "description": "Caused by Phytophthora infestans, potato late blight is the most destructive potato disease, capable of destroying entire fields within days. It caused the Irish famine of 1845.",
         "symptoms": [
-            "Small angular water-soaked spots on leaves (angular leaf spot)",
-            "Spots enlarge, turn brown, and may coalesce",
-            "Black arm symptoms on stems and branches",
-            "Boll rot with brown-black discolouration",
+            "Dark, water-soaked lesions on leaves and stems",
+            "White, sporulating growth on leaf undersides",
+            "Lesions turn brown-black and dry under hot weather",
+            "Brown to purple firm lesions on tubers extending into flesh",
+            "Entire plant collapse within a week in wet conditions",
         ],
-        "cause": "Bacterium Xanthomonas citri pv. malvacearum, spread by rain splash and contaminated seed",
-        "description": "Bacterial blight (angular leaf spot) is one of the oldest known diseases of cotton in India. It is most damaging in Central and South India during monsoon season with warm, humid weather. Severe infections can cause 30–40% yield loss.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Spray Pseudomonas fluorescens (10 g/litre) at 10-day intervals",
-            "Apply copper-based organic spray (Bordeaux mixture 1%)",
-            "Use neem oil (5 ml/litre) with turmeric extract (2%) as foliar spray",
-            "Remove and burn infected plant debris after harvest",
-        ],
-        "chemical_treatment": [
-            "Streptomycin sulphate (Streptocycline) — 0.5 g/litre + Copper oxychloride 2.5 g/litre",
-            "Copper hydroxide 77% WP (Kocide) — 2 g/litre",
-            "Copper oxychloride 50% WP (Blitox) — 2.5 g/litre",
-        ],
-        "dosage": "Streptocycline 6 g + Copper oxychloride 500 g per acre in 200 litres. Start at first symptom and repeat after 10 days.",
+        "treatment": {
+            "organic": [
+                "Spray 1% Bordeaux mixture as prophylactic in cool weather",
+                "Remove and destroy infected haulm immediately",
+            ],
+            "chemical": [
+                "Metalaxyl 8% + Mancozeb 64% WP @ 2.5 g/litre",
+                "Cymoxanil 8% + Mancozeb 64% WP @ 3 g/litre",
+                "Fenamidone 10% + Mancozeb 50% WG @ 3 g/litre",
+            ],
+            "dosage_per_acre": "200–250 litres spray solution per acre",
+            "indian_brands": ["Ridomil Gold (Syngenta)", "Curzate M (DuPont)", "Sectin (Bayer)"],
+        },
         "prevention": [
-            "Use acid-delinted disease-free seed",
-            "Seed treatment with Carboxin (2 g/kg) or Streptocycline (1 g/10 litres water for seed soak)",
-            "Grow resistant varieties (Suraj, NH 615)",
-            "Avoid working in fields when plants are wet",
-            "Crop rotation with cereals for 2+ years",
-        ],
-    },
-    "Cotton___Leaf_Curl": {
-        "disease_name": "Cotton Leaf Curl Virus",
-        "crop": "Cotton",
-        "symptoms": [
-            "Upward curling of leaf margins",
-            "Thickening and darkening of leaf veins (vein swelling)",
-            "Cup-shaped leaves with enation (outgrowths) on underside",
-            "Stunted plant growth with reduced boll formation",
-        ],
-        "cause": "Cotton Leaf Curl Virus (CLCuV), transmitted by whitefly (Bemisia tabaci)",
-        "description": "Cotton leaf curl disease is one of the most devastating cotton diseases in northwestern India (Punjab, Haryana, Rajasthan). It caused massive epidemics in the 1990s. Yield losses can reach 50–80% in susceptible varieties.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Install yellow sticky traps (15 per acre) for whitefly management",
-            "Spray neem oil (5 ml/litre) every 7 days",
-            "Apply Verticillium lecanii (5 g/litre) against whitefly nymphs",
-            "Uproot and destroy infected plants early to prevent virus spread",
-        ],
-        "chemical_treatment": [
-            "Imidacloprid 17.8% SL (Confidor) — 0.3 ml/litre",
-            "Thiamethoxam 25% WG (Actara) — 0.3 g/litre",
-            "Diafenthiuron 50% WP (Polo) — 1 g/litre",
-            "Pyriproxyfen 10% EC (Lano) — 1 ml/litre (targets whitefly eggs and nymphs)",
-        ],
-        "dosage": "Imidacloprid: 60 ml/acre in 200 litres. Start from 15 days after germination, repeat every 15 days. Rotate insecticide groups.",
-        "prevention": [
-            "Grow CLCuV-tolerant Bt cotton hybrids",
-            "Avoid early sowing — plant after first June rains to escape peak whitefly",
-            "Avoid planting near old cotton crop residues",
-            "Keep borders clean — remove weeds that harbour whiteflies",
-        ],
-    },
-    "Cotton___Healthy": {
-        "disease_name": "Healthy",
-        "crop": "Cotton",
-        "symptoms": [],
-        "cause": "No disease detected",
-        "description": "Your cotton plant looks healthy with normal leaf growth and no signs of curling, spots, or bacterial infection.",
-        "severity": "None",
-        "spread_risk": "None",
-        "organic_treatment": ["Continue preventive neem oil spray"],
-        "chemical_treatment": ["No treatment needed"],
-        "dosage": "No dosage required.",
-        "prevention": ["Monitor for whiteflies weekly", "Maintain balanced fertilisation"],
-    },
-
-    # ═══════════════════════════════════════════════════════════════════
-    #   MAIZE
-    # ═══════════════════════════════════════════════════════════════════
-    "Maize___Northern_Leaf_Blight": {
-        "disease_name": "Maize Northern Leaf Blight",
-        "crop": "Maize",
-        "symptoms": [
-            "Long elliptical greyish-green lesions (5–15 cm) on leaves",
-            "Lesions start on lower leaves and progress upwards",
-            "Severe blight can kill entire leaves",
-            "Reduced ear size and grain filling",
-        ],
-        "cause": "Fungus Exserohilum turcicum, favoured by moderate temperatures (18–27°C) with high humidity and dew",
-        "description": "Northern leaf blight (turcicum blight) is the most important foliar disease of maize in India. It is common in the hilly regions and during the kharif season in the plains. Yield losses of 30–50% can occur when the upper leaves are severely infected before tasseling.",
-        "severity": "High",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Apply Trichoderma viride (4 g/litre) as foliar spray at 10-day intervals",
-            "Spray neem oil (5 ml/litre) at first symptom",
-            "Remove heavily infected lower leaves to slow spread",
-            "Use Pseudomonas fluorescens (10 g/litre)",
-        ],
-        "chemical_treatment": [
-            "Mancozeb 75% WP (Dithane M-45) — 2.5 g/litre",
-            "Propiconazole 25% EC (Tilt) — 1 ml/litre",
-            "Azoxystrobin 23% SC (Amistar) — 1 ml/litre",
-            "Zineb 75% WP (Indofil Z-78) — 2 g/litre",
-        ],
-        "dosage": "Mancozeb: 500 g/acre in 200 litres. First spray at knee-high stage, repeat at pre-tassel. Apply Propiconazole if severe.",
-        "prevention": [
-            "Use resistant hybrids (HQPM-1, DHM 117)",
-            "Remove and destroy crop residues after harvest",
-            "Avoid mono-cropping of maize — rotate with pulses or oilseeds",
-            "Maintain balanced NPK with adequate potassium for disease resistance",
-        ],
-    },
-    "Maize___Common_Rust": {
-        "disease_name": "Maize Common Rust",
-        "crop": "Maize",
-        "symptoms": [
-            "Small circular to elongated brownish-red pustules on both leaf surfaces",
-            "Pustules burst to release powdery brown spores",
-            "In severe cases, leaves turn brown and dry up",
-        ],
-        "cause": "Fungus Puccinia sorghi, spread by wind-borne spores",
-        "description": "Common rust is widespread across all maize-growing regions of India. It is usually moderate in severity but can cause 15–25% yield loss when infection occurs early.",
-        "severity": "Medium",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Apply neem oil (5 ml/litre) at early pustule stage",
-            "Spray Trichoderma viride (4 g/litre) preventively",
-        ],
-        "chemical_treatment": [
-            "Mancozeb 75% WP (Dithane M-45) — 2.5 g/litre",
-            "Propiconazole 25% EC (Tilt) — 1 ml/litre",
-            "Hexaconazole 5% SC (Contaf) — 2 ml/litre",
-        ],
-        "dosage": "Propiconazole: 200 ml/acre in 200 litres. One spray usually sufficient at flag-leaf stage.",
-        "prevention": [
-            "Grow resistant hybrids",
-            "Timely sowing to avoid peak infection period",
-            "Remove volunteer maize plants",
-        ],
-    },
-    "Maize___Healthy": {
-        "disease_name": "Healthy",
-        "crop": "Maize",
-        "symptoms": [],
-        "cause": "No disease detected",
-        "description": "Your maize plant is healthy with vigorous green leaves and no disease symptoms.",
-        "severity": "None",
-        "spread_risk": "None",
-        "organic_treatment": ["Continue good agronomic practices"],
-        "chemical_treatment": ["No treatment needed"],
-        "dosage": "No dosage required.",
-        "prevention": ["Monitor for fall armyworm and leaf blight during kharif season"],
-    },
-
-    # ═══════════════════════════════════════════════════════════════════
-    #   SUGARCANE
-    # ═══════════════════════════════════════════════════════════════════
-    "Sugarcane___Red_Rot": {
-        "disease_name": "Sugarcane Red Rot",
-        "crop": "Sugarcane",
-        "symptoms": [
-            "Drying and withering of the 3rd and 4th leaves from top",
-            "Internal cane tissue turns red with white patches (brick-red and white cross-section)",
-            "Sour alcoholic smell from split cane",
-            "Shrinkage and hollowing of internodes",
-        ],
-        "cause": "Fungus Colletotrichum falcatum, spread through infected setts (seed cane) and soil",
-        "description": "Red rot is called the 'cancer of sugarcane' and is the most devastating disease in Indian sugarcane cultivation. It has historically wiped out entire varieties in India (e.g. Co 997). The disease is soil-borne and seed-borne, making management challenging.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Treat setts with Trichoderma viride (10 g/litre) for 30 minutes before planting",
-            "Apply Pseudomonas fluorescens as soil drench around root zone",
-            "Use Bacillus subtilis-based bio-agent at planting",
-            "Practice hot water treatment of setts at 52°C for 30 minutes (traditional method)",
-        ],
-        "chemical_treatment": [
-            "Carbendazim 50% WP (Bavistin) — sett treatment (1 g/litre for 30 min dip)",
-            "Thiophanate Methyl 70% WP (Topsin-M) — 1 g/litre sett dip",
-            "No effective foliar treatment once disease is established",
-        ],
-        "dosage": "Carbendazim: Prepare 1 g/litre solution. Dip setts for 30 minutes before planting. 200 litres solution per acre of setts.",
-        "prevention": [
-            "Use red rot-resistant varieties (Co 0238, CoLk 94184)",
-            "Always use disease-free seed cane from declared disease-free nurseries",
-            "Avoid ratooning of susceptible varieties",
-            "Remove and destroy infected stools — do not leave in field",
-            "Flood fields for 7 days to kill soil-borne inoculum before planting",
-        ],
-    },
-    "Sugarcane___Smut": {
-        "disease_name": "Sugarcane Smut",
-        "crop": "Sugarcane",
-        "symptoms": [
-            "Long black whip-like structure (5–100 cm) emerging from growing point",
-            "Whip is initially covered with silvery membrane that ruptures to release black spores",
-            "Thin, grass-like tillers with narrow leaves",
-            "Excessive tillering from infected stool",
-        ],
-        "cause": "Fungus Sporisorium scitamineum, spread by wind-borne spores and infected setts",
-        "description": "Whip smut is easily recognizable by the black whip emerging from the top of the plant. It is common across India and can cause 30–40% yield loss. Ratooning increases disease severity significantly.",
-        "severity": "Medium",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Hot water treatment of setts at 52°C for 30 minutes",
-            "Apply Trichoderma viride (10 g/litre) sett treatment",
-            "Remove and burn smutted whips before they release spores",
-        ],
-        "chemical_treatment": [
-            "Carbendazim 50% WP (Bavistin) — 1 g/litre sett dip for 30 minutes",
-            "Triadimefon 25% WP (Bayleton) — 1 g/litre foliar spray on ratoon cane",
-        ],
-        "dosage": "Carbendazim: 1 g/litre sett dip for 30 min before planting.",
-        "prevention": [
-            "Use smut-resistant varieties (CoLk 94184, Co 0238)",
-            "Avoid ratooning for more than 2 cycles",
-            "Rogue out smutted clumps before whips open",
-            "Use only healthy setts from disease-free nurseries",
-        ],
-    },
-    "Sugarcane___Healthy": {
-        "disease_name": "Healthy",
-        "crop": "Sugarcane",
-        "symptoms": [],
-        "cause": "No disease detected",
-        "description": "Your sugarcane looks healthy with strong cane growth and no visible symptoms of rot, smut, or leaf scald.",
-        "severity": "None",
-        "spread_risk": "None",
-        "organic_treatment": ["Maintain good agronomic practices"],
-        "chemical_treatment": ["No treatment needed"],
-        "dosage": "No dosage required.",
-        "prevention": ["Always use disease-free setts from certified nurseries"],
-    },
-
-    # ═══════════════════════════════════════════════════════════════════
-    #   ADDITIONAL COTTON PESTS & DISEASES
-    # ═══════════════════════════════════════════════════════════════════
-    "Cotton___American_Bollworm": {
-        "disease_name": "American Bollworm",
-        "crop": "Cotton",
-        "symptoms": [
-            "Circular bore holes on bolls with frass (excreta) visible",
-            "Larvae feeding inside bolls, damaging lint and seeds",
-            "Shedding of squares and young bolls",
-            "Damaged bolls show rotting due to secondary fungal infection",
-        ],
-        "cause": "Helicoverpa armigera larvae — polyphagous pest active during flowering and boll formation stages",
-        "description": "American bollworm (Helicoverpa armigera) is the most destructive pest of cotton in India. A single larva can damage 30–40 bolls during its life cycle. It bore into bolls and feeds on developing seeds and lint, causing 30–60% yield loss.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Install pheromone traps (Helilure) at 5 traps/acre to monitor and mass-trap male moths",
-            "Release Trichogramma chilonis egg parasitoid (1 lakh eggs/acre) at 15-day intervals from squaring",
-            "Spray HaNPV (Helicoverpa Nuclear Polyhedrosis Virus) at 250 LE/acre in evening hours",
-            "Apply neem seed kernel extract (NSKE 5%) at 10-day intervals during flowering",
-            "Hand-pick and destroy large larvae in early mornings",
-        ],
-        "chemical_treatment": [
-            "Emamectin Benzoate 5% SG (Proclaim) — 4 g/10 litres",
-            "Chlorantraniliprole 18.5% SC (Coragen) — 3 ml/10 litres",
-            "Spinosad 45% SC (Tracer) — 3 ml/10 litres",
-            "Indoxacarb 14.5% SC (Avaunt) — 10 ml/10 litres",
-        ],
-        "dosage": "Emamectin Benzoate: 80 g/acre in 200 litres water. Spray at ETL of 1 larva/plant at evening hours. Rotate chemistry to prevent resistance.",
-        "prevention": [
-            "Grow trap crops (pigeon pea, marigold) on borders to divert moth egg-laying",
-            "Use Bt cotton hybrids with bollworm resistance genes",
-            "Install bird perches (20/acre) to encourage predatory birds",
-            "Deep plough after harvest to expose pupae to sunlight and predators",
-            "Avoid mono-cropping of cotton year after year",
-        ],
-    },
-    "Cotton___Anthracnose": {
-        "disease_name": "Cotton Anthracnose",
-        "crop": "Cotton",
-        "symptoms": [
-            "Small reddish-brown spots on leaves and stems",
-            "Sunken, dark lesions on bolls with pink spore masses in humid weather",
-            "Seedling blight with damping off in nursery",
-            "Boll rot leading to lint discolouration",
-        ],
-        "cause": "Fungus Colletotrichum gossypii, seed-borne and spread by rain splash",
-        "description": "Cotton anthracnose affects seedlings, leaves, and bolls. It is most destructive as a boll rot during wet seasons, causing lint staining and reducing market grade. Yield losses of 10–25% are common in susceptible varieties during monsoon.",
-        "severity": "Medium",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Seed treatment with Trichoderma viride (4 g/kg seed) before sowing",
-            "Spray Pseudomonas fluorescens (10 g/litre) at 15-day intervals",
-            "Apply neem oil (5 ml/litre) at first symptom appearance",
-            "Remove and destroy infected plant debris",
-        ],
-        "chemical_treatment": [
-            "Carbendazim 50% WP (Bavistin) — 1 g/litre",
-            "Mancozeb 75% WP (Dithane M-45) — 2.5 g/litre",
-            "Copper oxychloride 50% WP (Blitox) — 2.5 g/litre",
-        ],
-        "dosage": "Carbendazim: 200 g/acre in 200 litres water. Spray at first symptom, repeat after 15 days.",
-        "prevention": [
-            "Use acid-delinted, disease-free certified seed",
-            "Seed treatment with Carboxin (2 g/kg seed)",
-            "Avoid dense planting — maintain proper spacing",
-            "Crop rotation with cereals for 2+ years",
-        ],
-    },
-    "Cotton___Aphid": {
-        "disease_name": "Cotton Aphid",
-        "crop": "Cotton",
-        "symptoms": [
-            "Curling and distortion of young leaves",
-            "Sticky honeydew deposits on leaf surfaces",
-            "Black sooty mould developing on honeydew",
-            "Yellowing and stunted plant growth",
-        ],
-        "cause": "Aphis gossypii — sap-sucking pest that multiplies rapidly in warm humid conditions",
-        "description": "Cotton aphid is a major sucking pest across all cotton-growing regions of India. Large colonies on the undersides of leaves drain plant sap, leading to reduced vigour. Honeydew deposits attract sooty mould and reduce lint quality.",
-        "severity": "Medium",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Spray neem oil (5 ml/litre) at 7-day intervals",
-            "Release ladybird beetles (Coccinella septempunctata) — natural predator of aphids",
-            "Apply Verticillium lecanii (5 g/litre) bio-insecticide",
-            "Use yellow sticky traps (12/acre) for monitoring",
-        ],
-        "chemical_treatment": [
-            "Imidacloprid 17.8% SL (Confidor) — 0.3 ml/litre",
-            "Thiamethoxam 25% WG (Actara) — 0.3 g/litre",
-            "Flonicamid 50% WG (Ulala) — 0.3 g/litre",
-            "Dimethoate 30% EC (Rogor) — 1.7 ml/litre",
-        ],
-        "dosage": "Imidacloprid: 60 ml/acre in 200 litres water. Spray when aphid population crosses ETL of 10 per leaf. Rotate with different mode of action.",
-        "prevention": [
-            "Avoid excess nitrogen fertilisation which promotes succulent growth",
-            "Maintain field sanitation — remove alternate weed hosts",
-            "Conserve natural enemies by avoiding broad-spectrum insecticides",
-            "Seed treatment with Imidacloprid (5 g/kg seed) for early protection",
-        ],
-    },
-    "Cotton___Boll_Rot": {
-        "disease_name": "Cotton Boll Rot",
-        "crop": "Cotton",
-        "symptoms": [
-            "Bolls show soft, water-soaked discolouration",
-            "Opening of bolls reveals rotted lint with foul smell",
-            "Black or brown fungal growth on boll surface",
-            "Premature boll dropping",
-        ],
-        "cause": "Complex of fungi (Aspergillus, Fusarium, Rhizopus) — often secondary infection after bollworm damage or prolonged wetness",
-        "description": "Boll rot complex is a group of fungal infections that collectively damage cotton bolls, especially during prolonged wet weather. It is often secondary to bollworm or pink bollworm damage and can cause 15–30% boll loss.",
-        "severity": "Medium",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Apply Trichoderma viride (4 g/litre) as preventive foliar spray",
-            "Spray Pseudomonas fluorescens (10 g/litre) at boll formation stage",
-            "Remove and destroy infected bolls promptly",
-            "Maintain proper drainage to reduce humidity around bolls",
-        ],
-        "chemical_treatment": [
-            "Carbendazim 50% WP (Bavistin) — 1 g/litre",
-            "Copper oxychloride 50% WP (Blitox) — 2.5 g/litre",
-            "Mancozeb 75% WP (Dithane M-45) — 2.5 g/litre",
-        ],
-        "dosage": "Carbendazim: 200 g/acre in 200 litres. Spray at first sign of boll rot, repeat after 10 days.",
-        "prevention": [
-            "Control bollworms effectively — boll damage is the primary entry point",
-            "Avoid dense canopy — maintain proper spacing and plant architecture",
+            "Use certified disease-free seed tubers from cold storage",
+            "Grow tolerant varieties: Kufri Girdhari, Kufri Frysona",
+            "Avoid late planting in plains",
             "Ensure good drainage in the field",
-            "Avoid late irrigation during boll maturation",
+            "Spray protectant fungicide before onset of cool, wet periods",
         ],
-    },
-    "Cotton___Bollworm": {
-        "disease_name": "Cotton Bollworm",
-        "crop": "Cotton",
-        "symptoms": [
-            "Bore holes on squares, flowers, and bolls",
-            "Frass visible at entry holes",
-            "Damaged bolls with partially eaten seeds and lint",
-            "Premature shedding of squares and small bolls",
-        ],
-        "cause": "Earias vittella and Earias insulana (spotted and spiny bollworm) — larvae bore into fruiting parts",
-        "description": "Spotted and spiny bollworms are major pests of cotton in India, active from squaring to boll maturation. Unlike American bollworm, these are smaller but bore into tender shoots, squares, and bolls, causing 20–40% damage.",
-        "severity": "High",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Install pheromone traps for monitoring adult moth activity",
-            "Release Trichogramma chilonis (1 lakh eggs/acre) at fortnightly intervals",
-            "Spray NSKE 5% at 10-day intervals",
-            "Apply Bacillus thuringiensis (Bt) spray (2 g/litre) at early larval stage",
-        ],
-        "chemical_treatment": [
-            "Emamectin Benzoate 5% SG (Proclaim) — 4 g/10 litres",
-            "Chlorantraniliprole 18.5% SC (Coragen) — 3 ml/10 litres",
-            "Profenophos 50% EC (Curacron) — 2 ml/litre",
-        ],
-        "dosage": "Emamectin Benzoate: 80 g/acre in 200 litres. Spray at ETL of 10% damaged fruiting parts.",
-        "prevention": [
-            "Collect and destroy fallen squares and damaged bolls weekly",
-            "Remove shoot tips harbouring larvae",
-            "Deep ploughing after harvest to expose pupae",
-            "Use resistant/tolerant Bt cotton hybrids",
-        ],
-    },
-    "Cotton___Mealy_Bug": {
-        "disease_name": "Cotton Mealy Bug",
-        "crop": "Cotton",
-        "symptoms": [
-            "White cotton-like waxy masses on stems, leaves, and bolls",
-            "Bushy appearance — stunted terminal growth due to shortened internodes",
-            "Sooty mould on honeydew deposits",
-            "Distorted and crinkled leaves",
-        ],
-        "cause": "Phenacoccus solenopsis — invasive sap-sucking pest that secretes white waxy covering",
-        "description": "Cotton mealy bug became a major invasive pest in India since 2006. Colonies settle in leaf axils, on stems, and on bolls, sucking sap and injecting toxins. Severe infestations cause 30–60% yield loss and reduce lint quality.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Release parasitoid Aenasius bambawalei (100 per acre) — highly effective bio-control",
-            "Spray neem oil (5 ml/litre) to disrupt waxy coating",
-            "Apply Verticillium lecanii (5 g/litre) at 10-day intervals",
-            "Use pressurised water jet to dislodge colonies from plants",
-        ],
-        "chemical_treatment": [
-            "Profenophos 50% EC (Curacron) — 2 ml/litre",
-            "Buprofezin 25% SC (Applaud) — 2 ml/litre (targets nymphs)",
-            "Thiamethoxam 25% WG (Actara) — 0.5 g/litre",
-        ],
-        "dosage": "Profenophos: 400 ml/acre in 200 litres. Spray with high-volume nozzle to penetrate waxy covering. Two sprays at 10-day intervals.",
-        "prevention": [
-            "Destroy previous crop residues — burn or deep plough",
-            "Maintain weed-free borders — Parthenium is major alternate host",
-            "Monitor fields from July onwards for early detection",
-            "Conserve natural enemies — avoid broad-spectrum early-season sprays",
-        ],
-    },
-    "Cotton___Whitefly": {
-        "disease_name": "Cotton Whitefly",
-        "crop": "Cotton",
-        "symptoms": [
-            "Tiny white flying insects under leaves when disturbed",
-            "Sticky honeydew on leaves and bolls",
-            "Black sooty mould on honeydew reducing photosynthesis",
-            "Yellowing and downward curling of leaves in severe infestations",
-        ],
-        "cause": "Bemisia tabaci — sap-sucking pest that also transmits leaf curl virus",
-        "description": "Cotton whitefly is both a direct pest (sap sucking) and vector of Cotton Leaf Curl Virus. Severe outbreaks in Punjab and Haryana (2015) caused massive crop losses. Honeydew contamination makes lint sticky and unmarketable.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Install yellow sticky traps (15/acre) for monitoring and mass trapping",
-            "Spray neem oil (5 ml/litre) every 7 days",
-            "Release Encarsia formosa or Chrysoperla carnea (bio-control agents)",
-            "Apply Verticillium lecanii (5 g/litre) against nymphs",
-        ],
-        "chemical_treatment": [
-            "Diafenthiuron 50% WP (Polo) — 1 g/litre",
-            "Spiromesifen 22.9% SC (Oberon) — 0.5 ml/litre",
-            "Pyriproxyfen 10% EC (Lano) — 1 ml/litre",
-            "Thiamethoxam 25% WG (Actara) — 0.3 g/litre",
-        ],
-        "dosage": "Diafenthiuron: 200 g/acre in 200 litres. Rotate mode of action every spray. Spray undersides of leaves.",
-        "prevention": [
-            "Remove alternate weed hosts around fields",
-            "Avoid early sowing — delays overlap with peak whitefly season",
-            "Use resistant varieties where available",
-            "Seed treatment with Imidacloprid (5 g/kg) for early-season protection",
-        ],
-    },
-    "Cotton___Pink_Bollworm": {
-        "disease_name": "Pink Bollworm",
-        "crop": "Cotton",
-        "symptoms": [
-            "Rosette flowers — petals stuck together unable to open normally",
-            "Green bolls show entry holes with pink larvae inside",
-            "Double seeds (fused seed pairs) in cross-section of boll",
-            "Premature boll opening with damaged lint",
-        ],
-        "cause": "Pectinophora gossypiella larvae — bore into green bolls and feed on developing seeds",
-        "description": "Pink bollworm is one of the most damaging pests of cotton in India, especially in Central India (Maharashtra, Gujarat, Madhya Pradesh). Larvae feed inside green bolls causing 20–50% yield loss. It is the primary pest that has developed resistance to Bt cotton.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Install pheromone traps (Gossyplure) at 5/acre for monitoring",
-            "Release Trichogramma achaeae (1 lakh/acre) at boll initiation",
-            "Spray NSKE 5% at green boll stage",
-            "Practice mass trapping with 40 pheromone traps/acre",
-        ],
-        "chemical_treatment": [
-            "Chlorantraniliprole 18.5% SC (Coragen) — 3 ml/10 litres",
-            "Quinalphos 25% EC (Ekalux) — 2 ml/litre",
-            "Cypermethrin 25% EC — 1 ml/litre (use only if needed)",
-        ],
-        "dosage": "Chlorantraniliprole: 60 ml/acre in 200 litres. Spray at first sign of rosette flowers. Repeat after 15 days.",
-        "prevention": [
-            "Destroy crop residues immediately after last picking",
-            "Do not carry-over kapas (seed cotton) in fields — pink bollworm pupae survive",
-            "Plant early-maturing varieties to escape late-season build-up",
-            "Maintain crop-free period (June–July) before new season",
-        ],
-    },
-    "Cotton___Red_Bug": {
-        "disease_name": "Red Cotton Bug",
-        "crop": "Cotton",
-        "symptoms": [
-            "Bright red and black bugs clustered on open bolls",
-            "Staining of lint with yellowish-brown spots from bug excreta",
-            "Seeds appear shrivelled due to sap extraction",
-            "Reduced oil content in cottonseed",
-        ],
-        "cause": "Dysdercus koenigii (red cotton bug) — sap-sucking pest that feeds on mature bolls",
-        "description": "Red cotton bug is a stainer pest — it stains the lint with its excreta, reducing market grade and price. It is active during boll opening and feeds on ripening seeds, reducing seed viability and oil content. Commonly seen in Central and South India.",
-        "severity": "Medium",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Hand-collect bugs in early morning when they are sluggish",
-            "Spray neem oil (5 ml/litre) on open bolls",
-            "Remove alternate host weeds (Sida, Abutilon) near fields",
-            "Use light traps at night to monitor and trap adults",
-        ],
-        "chemical_treatment": [
-            "Malathion 50% EC — 2 ml/litre",
-            "Lambda Cyhalothrin 5% EC (Karate) — 1 ml/litre",
-            "Dimethoate 30% EC (Rogor) — 1.7 ml/litre",
-        ],
-        "dosage": "Malathion: 400 ml/acre in 200 litres. Spray on open bolls in evening. One spray usually sufficient.",
-        "prevention": [
-            "Timely picking of open bolls — don't let kapas remain in field",
-            "Remove and destroy alternate weed hosts (Sida spp.) from field borders",
-            "Clean ginning areas — bugs harbour in stored seed cotton",
-        ],
-    },
-    "Cotton___Thrips": {
-        "disease_name": "Cotton Thrips",
-        "crop": "Cotton",
-        "symptoms": [
-            "Upward curling of leaf margins (leaf curl due to thrips, not virus)",
-            "Silvery-white streaks on leaf surface",
-            "Brownish-yellow discolouration of leaves",
-            "Seedlings show crinkling and stunted growth",
-        ],
-        "cause": "Thrips tabaci — tiny rasping-sucking insects that lacerate leaf cells",
-        "description": "Cotton thrips is a major early-season pest in India, attacking seedlings and young plants. The tiny insects rasp leaf surfaces and suck cell sap, causing upward leaf curling and silvery patches. Severe seedling-stage attack can delay crop establishment.",
-        "severity": "Medium",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Spray neem oil (5 ml/litre) at 7-day intervals on seedlings",
-            "Apply Verticillium lecanii (5 g/litre) on nymphs",
-            "Use blue sticky traps (8/acre) for monitoring",
-            "Intercrop with onion or garlic — natural thrips repellents",
-        ],
-        "chemical_treatment": [
-            "Fipronil 5% SC (Regent) — 2 ml/litre",
-            "Imidacloprid 17.8% SL (Confidor) — 0.3 ml/litre",
-            "Spinosad 45% SC (Tracer) — 3 ml/10 litres",
-        ],
-        "dosage": "Fipronil: 400 ml/acre in 200 litres. Spray at seedling stage when thrips count exceeds 10/leaf. Seed treatment is preferred.",
-        "prevention": [
-            "Seed treatment with Imidacloprid (5 g/kg seed) or Thiamethoxam (4 g/kg seed)",
-            "Avoid sowing near onion or chilli fields which are thrips reservoirs",
-            "Maintain weed-free borders",
-            "Conserve natural enemies like minute pirate bugs",
-        ],
-    },
-    "Cotton___Wilt": {
-        "disease_name": "Cotton Wilt",
-        "crop": "Cotton",
-        "symptoms": [
-            "Sudden wilting of plants despite adequate soil moisture",
-            "Yellowing of leaves starting from lower canopy",
-            "Dark brown discolouration of vascular tissue visible when stem is cut",
-            "Roots show brownish-black discolouration",
-        ],
-        "cause": "Fungus Fusarium oxysporum f. sp. vasinfectum — soil-borne, enters through roots and blocks vascular tissue",
-        "description": "Cotton wilt (Fusarium wilt) is a soil-borne disease that clogs the plant's water-conducting vessels. It is prevalent in black cotton soils of Central India. Plants wilt and die despite irrigated conditions. Heavy soils with poor drainage are most susceptible.",
-        "severity": "High",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Seed treatment with Trichoderma viride (10 g/kg seed)",
-            "Soil application of Trichoderma harzianum (2.5 kg/acre) mixed with FYM",
-            "Apply Pseudomonas fluorescens (10 g/litre) as root drench",
-            "Incorporate mustard cake (100 kg/acre) as soil amendment",
-        ],
-        "chemical_treatment": [
-            "Carbendazim 50% WP (Bavistin) — 1 g/litre root drench",
-            "Thiophanate Methyl 70% WP (Topsin-M) — 1 g/litre root drench",
-            "No effective foliar chemical once wilt symptoms are advanced",
-        ],
-        "dosage": "Carbendazim: Drench 200 ml solution per plant at base. Apply at first wilting symptom. Preventive treatment at 30 and 60 days after sowing.",
-        "prevention": [
-            "Grow wilt-resistant varieties (Suraj, NH 615, MCU 5)",
-            "Long crop rotation (3+ years) with cereals or pulses",
-            "Avoid waterlogging — ensure proper drainage",
-            "Deep summer ploughing to reduce soil inoculum",
-            "Avoid root injury during intercultural operations",
-        ],
+        "severity": "high",
+        "is_healthy": False,
     },
 
-    # ═══════════════════════════════════════════════════════════════════
-    #   ADDITIONAL WHEAT DISEASES & PESTS
-    # ═══════════════════════════════════════════════════════════════════
-    "Wheat___Flag_Smut": {
-        "disease_name": "Wheat Flag Smut",
-        "crop": "Wheat",
+    # ─────────────────── COTTON (6) ───────────────────
+
+    "cotton_bacterial_blight": {
+        "name": "Cotton Bacterial Blight",
+        "crop": "Cotton",
+        "description": "Caused by Xanthomonas axonopodis pv. malvacearum, bacterial blight produces angular water-soaked lesions on leaves, stem cankers and systemic blackarm on bolls and stems.",
         "symptoms": [
-            "Long grey-black streaks (sori) parallel to leaf veins",
-            "Streaks rupture to release dark powdery spores",
-            "Infected leaves twist, shred, and roll",
-            "Severely infected plants may not produce ears",
+            "Angular water-soaked spots on leaves limited by veins",
+            "Spots turn dark brown to black with yellow halo",
+            "Vein blackening and blighting",
+            "Blackarm — dark sunken cankers on stems and petioles",
+            "Dark, water-soaked lesions on bolls",
         ],
-        "cause": "Fungus Urocystis agropyri — soil-borne, infects at seedling stage",
-        "description": "Flag smut produces long dark smut streaks on leaves. While not as devastating as other smuts, it can cause 15–25% yield loss in endemic areas. It is more common in irrigated wheat regions of northern India.",
-        "severity": "Medium",
-        "spread_risk": "Low",
-        "organic_treatment": [
-            "Seed treatment with Trichoderma viride (4 g/kg seed)",
-            "Remove and destroy infected plants before spore dispersal",
-            "Apply organic matter to improve soil health and microbial antagonism",
-        ],
-        "chemical_treatment": [
-            "Carboxin 37.5% + Thiram 37.5% DS (Vitavax Power) — 2.5 g/kg seed treatment",
-            "Carbendazim 50% WP (Bavistin) — 2 g/kg seed treatment",
-        ],
-        "dosage": "Vitavax Power: 2.5 g/kg seed. Mix thoroughly and dry in shade before sowing.",
+        "treatment": {
+            "organic": [
+                "Seed treatment with streptomycin @ 0.25 g + water",
+                "Spray 1% Bordeaux mixture at 15-day intervals",
+            ],
+            "chemical": [
+                "Streptocycline 90% SP @ 0.5 g + Copper oxychloride @ 3 g/litre",
+                "Copper hydroxide 77% WP @ 3 g/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Plantomycin (Aries)", "Kocide (Dow)"],
+        },
         "prevention": [
-            "Mandatory seed treatment before every sowing",
-            "Use certified disease-free seed",
-            "Avoid continuous wheat cropping — rotate with pulses or oilseeds",
+            "Use disease-free, acid-delinted certified seed",
+            "Grow resistant varieties: NH-615, G.Cot-Hy-8",
+            "Avoid field entry when plants are wet",
+            "Crop rotation with sorghum or soybean",
         ],
-    },
-    "Wheat___Leaf_Smut": {
-        "disease_name": "Wheat Leaf Smut",
-        "crop": "Wheat",
-        "symptoms": [
-            "Small dark oval sori on leaf blades",
-            "Sori covered by a thin silvery membrane that ruptures to release spores",
-            "Leaves may show chlorotic spots around sori",
-        ],
-        "cause": "Fungus Entyloma tritici — mild, locally occurring smut disease",
-        "description": "Wheat leaf smut is generally a minor disease but can be locally important. It reduces photosynthetic area slightly and is an indicator of poor seed health. Usually more cosmetic than yield-reducing.",
-        "severity": "Low",
-        "spread_risk": "Low",
-        "organic_treatment": [
-            "Seed treatment with Trichoderma viride (4 g/kg seed)",
-            "Maintain balanced nutrition for plant vigor",
-        ],
-        "chemical_treatment": [
-            "Carboxin 37.5% + Thiram 37.5% DS (Vitavax Power) — 2.5 g/kg seed",
-            "Carbendazim 50% WP (Bavistin) — 2 g/kg seed treatment",
-        ],
-        "dosage": "Vitavax Power: 2.5 g/kg seed — seed treatment before sowing.",
-        "prevention": [
-            "Use certified disease-free seed",
-            "Seed treatment as routine practice",
-            "Crop rotation with non-cereals",
-        ],
-    },
-    "Wheat___Black_Rust": {
-        "disease_name": "Wheat Black Rust (Stem Rust)",
-        "crop": "Wheat",
-        "symptoms": [
-            "Large dark reddish-brown to black pustules on stems, leaves, and leaf sheaths",
-            "Pustules rupture the epidermis — rough to touch",
-            "Stems weaken and may break (lodging)",
-            "Shrivelled grains with poor filling",
-        ],
-        "cause": "Fungus Puccinia graminis tritici, spread by wind-borne uredospores over long distances",
-        "description": "Black rust (stem rust) is the most destructive wheat rust but occurs less frequently in India than brown or yellow rust. When it does appear, yield losses can exceed 50%. It historically caused famines before resistant varieties were developed.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Remove barberry (alternate host) from nearby areas",
-            "Spray neem oil (5 ml/litre) at first pustule appearance",
-            "Apply Trichoderma viride (4 g/litre) preventively",
-        ],
-        "chemical_treatment": [
-            "Propiconazole 25% EC (Tilt) — 1 ml/litre",
-            "Tebuconazole 25.9% EC (Folicur) — 1 ml/litre",
-            "Mancozeb 75% WP (Dithane M-45) — 2.5 g/litre as preventive",
-        ],
-        "dosage": "Propiconazole: 200 ml/acre in 200 litres water. Spray at first pustule. May require second spray after 15 days.",
-        "prevention": [
-            "Grow resistant varieties (HD 3086, DBW 187)",
-            "Avoid late sowing — late crops face higher rust pressure",
-            "Monitor fields from February in North India",
-            "Destroy volunteer wheat and barberry plants",
-        ],
-    },
-    "Wheat___Yellow_Rust": {
-        "disease_name": "Wheat Yellow Rust (Stripe Rust)",
-        "crop": "Wheat",
-        "symptoms": [
-            "Yellow-orange pustules arranged in distinct stripes along leaf veins",
-            "Pustules smaller than brown rust, in linear rows",
-            "Severely infected leaves turn yellow and dry",
-            "Poor ear development and shrivelled grains",
-        ],
-        "cause": "Fungus Puccinia striiformis tritici, favoured by cool temperatures (10–15°C) and humid conditions",
-        "description": "Yellow rust is the most damaging wheat rust in the cooler hill and northern plains of India. It appears earlier than other rusts (December–January) and can cause 40–100% yield loss in susceptible varieties when conditions favour epidemics.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Spray neem oil (5 ml/litre) at first Signs of stripe formation",
-            "Apply Trichoderma viride (4 g/litre) as preventive",
-            "Monitor fields weekly from December in North India",
-        ],
-        "chemical_treatment": [
-            "Propiconazole 25% EC (Tilt) — 1 ml/litre",
-            "Tebuconazole 25.9% EC (Folicur) — 1 ml/litre",
-            "Trifloxystrobin 25% + Tebuconazole 50% WG (Nativo) — 0.4 g/litre",
-        ],
-        "dosage": "Propiconazole: 200 ml/acre in 200 litres. Spray immediately on detection. Repeat after 15 days if needed.",
-        "prevention": [
-            "Grow resistant varieties — check latest recommendations from IIWBR",
-            "Timely sowing (November) — late crops face higher risk",
-            "Avoid excess nitrogen which creates dense, humid canopy",
-            "Community-level surveillance for early warning",
-        ],
-    },
-    "Wheat___Leaf_Blight": {
-        "disease_name": "Wheat Leaf Blight",
-        "crop": "Wheat",
-        "symptoms": [
-            "Irregular brown necrotic patches on leaves",
-            "Lesions may have yellow halo margins",
-            "Severely infected leaves dry from tip downwards",
-            "Reduced grain filling in late infections",
-        ],
-        "cause": "Bipolaris sorokiniana (spot blotch) and Alternaria triticina — favoured by warm humid weather",
-        "description": "Wheat leaf blight complex (spot blotch + Alternaria blight) is a major constraint in the warmer wheat-growing regions of eastern India (Bihar, eastern UP, West Bengal). Yield losses of 15–25% are common in susceptible varieties.",
-        "severity": "Medium",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Spray Trichoderma viride (4 g/litre) at tillering and booting stages",
-            "Apply neem oil (5 ml/litre) at 15-day intervals",
-            "Remove heavily infected lower leaves",
-        ],
-        "chemical_treatment": [
-            "Propiconazole 25% EC (Tilt) — 1 ml/litre",
-            "Mancozeb 75% WP (Dithane M-45) — 2.5 g/litre",
-            "Carbendazim 12% + Mancozeb 63% WP (SAAF) — 2 g/litre",
-        ],
-        "dosage": "Propiconazole: 200 ml/acre in 200 litres. Two sprays at 50 and 70 days after sowing.",
-        "prevention": [
-            "Grow resistant varieties (HD 2967, DBW 39)",
-            "Timely sowing — avoid late planting",
-            "Balanced NPK with adequate potassium",
-            "Avoid excess irrigation during grain filling",
-        ],
-    },
-    "Wheat___Scab": {
-        "disease_name": "Wheat Head Scab (Fusarium Head Blight)",
-        "crop": "Wheat",
-        "symptoms": [
-            "Premature bleaching of individual spikelets on the ear",
-            "Pink or orange fungal growth at the base of infected spikelets",
-            "Shrivelled, chalky-white or pinkish grains",
-            "Blackening of the rachis in severe cases",
-        ],
-        "cause": "Fusarium graminearum — favoured by warm, wet weather during anthesis (flowering)",
-        "description": "Wheat scab is a serious quality and yield concern. It not only reduces grain weight but also produces mycotoxins (deoxynivalenol/DON) that are harmful to humans and livestock. The disease is sporadic but devastating when it occurs.",
-        "severity": "High",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Remove crop residues — Fusarium survives on corn/wheat stubble",
-            "Apply Trichoderma viride (4 g/litre) at heading stage",
-            "Avoid overhead irrigation during flowering",
-        ],
-        "chemical_treatment": [
-            "Tebuconazole 25.9% EC (Folicur) — 1 ml/litre at anthesis",
-            "Propiconazole 25% EC (Tilt) — 1 ml/litre",
-            "Carbendazim 50% WP (Bavistin) — 1 g/litre",
-        ],
-        "dosage": "Tebuconazole: 200 ml/acre in 200 litres. Spray at early anthesis (50% heads flowering). Timing is critical.",
-        "prevention": [
-            "Rotate with non-cereal crops — avoid wheat after maize",
-            "Plough under crop residues to accelerate decomposition",
-            "Avoid excess nitrogen which delays maturity into wet season",
-            "Grow moderately resistant varieties where available",
-        ],
-    },
-    "Wheat___Stem_Fly": {
-        "disease_name": "Wheat Stem Fly",
-        "crop": "Wheat",
-        "symptoms": [
-            "Central shoot dries up (dead heart) in young plants",
-            "Small maggot visible inside the stem when split open",
-            "Stem shows brownish internal damage from maggot feeding",
-            "Reduced tillering and stunted growth",
-        ],
-        "cause": "Atherigona sp. (shoot fly) — maggot bores into stem and kills the growing point",
-        "description": "Wheat stem fly causes dead hearts in young wheat plants by boring into the central stem. It is more common in late-sown wheat and in warmer regions of peninsular India. Yield loss of 10–20% in late-sown crops.",
-        "severity": "Medium",
-        "spread_risk": "Low",
-        "organic_treatment": [
-            "Apply neem seed kernel extract (NSKE 5%) at seedling stage",
-            "Spray neem oil (5 ml/litre) at 15 days after sowing",
-            "Pull out and destroy dead heart shoots",
-        ],
-        "chemical_treatment": [
-            "Imidacloprid 17.8% SL (Confidor) — 0.3 ml/litre as spray",
-            "Fipronil 5% SC (Regent) — 2 ml/litre",
-            "Seed treatment with Imidacloprid (5 g/kg seed) is most effective",
-        ],
-        "dosage": "Seed treatment: Imidacloprid 5 g/kg seed. Foliar: Imidacloprid 60 ml/acre if stem fly incidence exceeds 10%.",
-        "prevention": [
-            "Timely sowing (November 1–15 in North India) — late sowing increases risk",
-            "Seed treatment with Imidacloprid is the best preventive measure",
-            "Avoid continuous wheat — rotate with mustard or pulses",
-            "Maintain optimum seed rate for vigorous stand establishment",
-        ],
-    },
-    "Wheat___Aphid": {
-        "disease_name": "Wheat Aphid",
-        "crop": "Wheat",
-        "symptoms": [
-            "Clusters of small green or brown aphids on leaves, stems, and ears",
-            "Yellowing and curling of leaves",
-            "Honeydew deposits leading to sooty mould",
-            "Reduced grain filling and shrivelled grains",
-        ],
-        "cause": "Sitobion avenae and Rhopalosiphum padi — sap-sucking insects that multiply rapidly in February–March",
-        "description": "Wheat aphid is a major pest across the Indo-Gangetic plains, appearing during heading and grain-filling stages. Large colonies on the ear can reduce grain weight by 15–30%. They also transmit Barley Yellow Dwarf Virus (BYDV).",
-        "severity": "Medium",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Spray neem oil (5 ml/litre) when colonies first appear",
-            "Release ladybird beetles — effective natural predator",
-            "Apply tobacco decoction (500 g tobacco in 10 litres water)",
-        ],
-        "chemical_treatment": [
-            "Imidacloprid 17.8% SL (Confidor) — 0.3 ml/litre",
-            "Thiamethoxam 25% WG (Actara) — 0.3 g/litre",
-            "Dimethoate 30% EC (Rogor) — 1.7 ml/litre",
-        ],
-        "dosage": "Imidacloprid: 60 ml/acre in 200 litres. Spray when aphid count exceeds 10 per ear. One spray usually sufficient.",
-        "prevention": [
-            "Timely sowing — late-sown crops face more aphid pressure",
-            "Avoid excess nitrogen — promotes lush growth attracting aphids",
-            "Conserve natural enemies — ladybirds, lacewings, syrphid flies",
-            "Monitor fields from February onwards",
-        ],
-    },
-    "Wheat___Mite": {
-        "disease_name": "Wheat Mite",
-        "crop": "Wheat",
-        "symptoms": [
-            "Silvery white or yellow stippling on upper leaf surface",
-            "Leaf margins may curl inward",
-            "Fine webbing visible on leaf undersides in heavy infestations",
-            "Leaves dry out from margins in severe cases",
-        ],
-        "cause": "Petrobia latens (brown wheat mite) — tiny mites that pierce leaf cells and suck sap",
-        "description": "Wheat mites are occasional pests in dry, warm conditions. Brown wheat mite (Petrobia latens) can cause silvery stippling and leaf drying. They are usually controlled naturally by rainfall and predatory mites. Yield loss is typically 5–15%.",
-        "severity": "Low",
-        "spread_risk": "Low",
-        "organic_treatment": [
-            "Spray wettable sulphur (3 g/litre) — effective acaricide",
-            "Apply neem oil (5 ml/litre) at 10-day intervals",
-            "Maintain adequate irrigation — drought stress worsens mite damage",
-        ],
-        "chemical_treatment": [
-            "Dicofol 18.5% EC (Kelthane) — 2.5 ml/litre",
-            "Wettable Sulphur 80% WP (Sulfex) — 3 g/litre",
-            "Propargite 57% EC (Omite) — 1 ml/litre",
-        ],
-        "dosage": "Wettable Sulphur: 600 g/acre in 200 litres. Spray when mite population is noticeable. One or two sprays sufficient.",
-        "prevention": [
-            "Maintain adequate irrigation — avoid drought stress",
-            "Avoid excess use of broad-spectrum insecticides that kill predatory mites",
-            "Monitor fields during dry spells in February–March",
-        ],
+        "severity": "medium",
+        "is_healthy": False,
     },
 
-    # ═══════════════════════════════════════════════════════════════════
-    #   ADDITIONAL RICE DISEASES
-    # ═══════════════════════════════════════════════════════════════════
-    "Rice___Tungro": {
-        "disease_name": "Rice Tungro",
-        "crop": "Rice",
+    "cotton_curl_virus": {
+        "name": "Cotton Leaf Curl Virus",
+        "crop": "Cotton",
+        "description": "Cotton Leaf Curl Disease (CLCuD) is caused by a begomovirus complex transmitted by whitefly Bemisia tabaci. It is a serious threat to cotton production in Punjab, Haryana and Rajasthan.",
         "symptoms": [
-            "Yellowing to orange discolouration of leaves starting from tip",
-            "Stunted plant growth with reduced tillering",
-            "Leaves become mottled with irregular yellow-green patches",
-            "Delayed or no heading in severely affected plants",
+            "Upward curling of leaves",
+            "Leaf veins thicken and turn dark — vein swelling",
+            "Leaf enations (cup-shaped outgrowths) on underside",
+            "Stunted plants with reduced boll setting",
+            "Abundant whiteflies on undersides",
         ],
-        "cause": "Rice Tungro Virus complex (RTSV + RTBV), transmitted by green leafhopper (Nephotettix virescens)",
-        "description": "Rice tungro is one of the most devastating viral diseases of rice in South and Southeast Asia. In India, it is most severe in Southern states (Andhra Pradesh, Tamil Nadu, Kerala). Yield losses can reach 40–100% in epidemic years.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Install yellow sticky traps and light traps to monitor leafhopper vectors",
-            "Spray neem oil (5 ml/litre) to repel leafhoppers",
-            "Release egg parasitoid Anagrus flaveolus against leafhoppers",
-            "Uproot and destroy infected plants immediately to prevent virus spread",
-        ],
-        "chemical_treatment": [
-            "Imidacloprid 17.8% SL (Confidor) — 0.3 ml/litre for leafhopper control",
-            "Thiamethoxam 25% WG (Actara) — 0.3 g/litre",
-            "Carbofuran 3% CG (Furadan) — 12.5 kg/acre (soil application at transplanting)",
-            "No chemical cure for virus once plant is infected — manage vector only",
-        ],
-        "dosage": "Imidacloprid: 60 ml/acre in 200 litres. Apply at transplanting and repeat at 15-day intervals during leafhopper peak.",
+        "treatment": {
+            "organic": [
+                "No cure for viral infection",
+                "Remove infected plants immediately",
+                "Yellow sticky traps @ 12/acre for whitefly monitoring",
+            ],
+            "chemical": [
+                "Imidacloprid 70% WS seed treatment @ 5 g/kg seed",
+                "Thiamethoxam 25% WG @ 0.5 g/litre foliar spray",
+                "Diafenthiuron 50% WP @ 1.5 g/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Gaucho (Bayer)", "Actara (Syngenta)", "Polo (Syngenta)"],
+        },
         "prevention": [
-            "Grow tungro-resistant varieties (IR64, Vikramarya, Surekha)",
-            "Synchronised planting in the community to reduce staggered crops",
-            "Destroy crop ratoons and volunteer plants after harvest",
-            "Maintain proper spacing and avoid dense planting",
-            "Nursery treatment with Imidacloprid seed soak",
+            "Grow tolerant Bt cotton varieties: Bollgard-II + CLCuD tolerance",
+            "Control whitefly from seedling stage",
+            "Rogue infected plants before virus spreads",
+            "Spray systemic insecticides at 15-day intervals",
         ],
+        "severity": "high",
+        "is_healthy": False,
     },
 
-    # ═══════════════════════════════════════════════════════════════════
-    #   ADDITIONAL MAIZE DISEASES & PESTS
-    # ═══════════════════════════════════════════════════════════════════
-    "Maize___Gray_Leaf_Spot": {
-        "disease_name": "Maize Gray Leaf Spot",
-        "crop": "Maize",
+    "cotton_fusarium_wilt": {
+        "name": "Cotton Fusarium Wilt",
+        "crop": "Cotton",
+        "description": "Caused by Fusarium oxysporum f. sp. vasinfectum, fusarium wilt invades the vascular system causing yellowing, wilting and death of cotton plants. It persists in soil for many years.",
         "symptoms": [
-            "Rectangular grey-tan lesions running parallel to leaf veins",
-            "Lesions have sharply defined edges bounded by veins",
-            "Lesions coalesce in severe cases, blighting entire leaves",
-            "Lower leaves affected first, progressing upward",
+            "Yellowing starting from lower leaves",
+            "Wilting of entire plant or single branches",
+            "Brown discolouration of vascular tissue when stem cut",
+            "Stunted growth and premature boll opening",
+            "Taproot and lateral roots show brown rot",
         ],
-        "cause": "Fungus Cercospora zeae-maydis — favoured by humid conditions and minimum tillage",
-        "description": "Gray leaf spot is an increasing concern in Indian maize, especially in areas with conservation tillage where crop residues remain on the surface. Yield losses of 20–40% can occur when lesions develop before tasseling.",
-        "severity": "Medium",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Remove and destroy crop residues after harvest",
-            "Apply Trichoderma viride (4 g/litre) as preventive foliar spray",
-            "Spray Pseudomonas fluorescens (10 g/litre) at early lesion stage",
-        ],
-        "chemical_treatment": [
-            "Azoxystrobin 23% SC (Amistar) — 1 ml/litre",
-            "Propiconazole 25% EC (Tilt) — 1 ml/litre",
-            "Mancozeb 75% WP (Dithane M-45) — 2.5 g/litre",
-        ],
-        "dosage": "Azoxystrobin: 200 ml/acre in 200 litres. Spray at V8–VT stage when lesions first appear.",
+        "treatment": {
+            "organic": [
+                "Seed treatment with Trichoderma viride @ 4 g/kg seed",
+                "Soil drenching with T. viride @ 2.5 kg/acre in 200 litres",
+                "Apply neem cake @ 250 kg/acre to suppress pathogen",
+            ],
+            "chemical": [
+                "Carbendazim 50% WP seed treatment @ 2 g/kg",
+                "Thiophanate methyl 70% WP @ 1 g/litre soil drench",
+            ],
+            "dosage_per_acre": "200–250 litres soil drench per acre",
+            "indian_brands": ["Bavistin (BASF)", "Roko (Rallis)"],
+        },
         "prevention": [
-            "Rotate with non-cereal crops for at least one season",
-            "Plough under crop residues to reduce inoculum",
-            "Grow tolerant hybrids",
-            "Maintain balanced nutrition with adequate potassium",
+            "Grow resistant varieties: Suraj, G.Cot-Hy-4",
+            "Avoid planting in fields with known wilt history",
+            "Deep summer ploughing to expose and kill fungus",
+            "Maintain soil pH 6.5–7.0",
+            "Crop rotation with cereals",
         ],
-    },
-    "Maize___Armyworm": {
-        "disease_name": "Maize Armyworm",
-        "crop": "Maize",
-        "symptoms": [
-            "Irregular holes and ragged edges on leaves",
-            "Whorl leaves show extensive feeding damage",
-            "Frass (excreta) visible in leaf whorls",
-            "Larvae found hidden inside the leaf whorl",
-        ],
-        "cause": "Mythimna separata (common armyworm) — gregarious caterpillars that migrate and feed in armies",
-        "description": "Armyworm outbreaks are sporadic but devastating in Indian maize. Larvae feed gregariously and can strip entire fields overnight. They are most active during monsoon season and migrate in swarms across fields.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Install light traps (1/acre) to monitor moth activity",
-            "Spray NSKE 5% or neem oil (5 ml/litre)",
-            "Release Trichogramma chilonis (1 lakh/acre) for egg parasitisation",
-            "Hand-collect larvae in early morning from whorls",
-        ],
-        "chemical_treatment": [
-            "Emamectin Benzoate 5% SG (Proclaim) — 4 g/10 litres",
-            "Chlorantraniliprole 18.5% SC (Coragen) — 3 ml/10 litres",
-            "Lambda Cyhalothrin 5% EC (Karate) — 1 ml/litre",
-        ],
-        "dosage": "Emamectin Benzoate: 80 g/acre in 200 litres. Spray into leaf whorls in evening. One spray usually sufficient.",
-        "prevention": [
-            "Plough fields between seasons to expose pupae",
-            "Light traps for early warning of moth migration",
-            "Timely sowing — avoid coincidence with monsoon peak",
-            "Maintain weed-free borders",
-        ],
-    },
-    "Maize___Fall_Armyworm": {
-        "disease_name": "Maize Fall Armyworm",
-        "crop": "Maize",
-        "symptoms": [
-            "Windowing of leaves — transparent patches where epidermis is eaten",
-            "Extensive whorl damage with copious frass",
-            "Large ragged holes in leaves",
-            "Larvae bore into ears and feed on developing kernels",
-        ],
-        "cause": "Spodoptera frugiperda — invasive pest from Americas, entered India in 2018",
-        "description": "Fall armyworm (FAW) is a devastating invasive pest that arrived in India in 2018 and has since spread across all maize-growing states. FAW is harder to control than native armyworms due to its rapid reproduction and tolerance to many insecticides. Yield losses of 30–60% are common without management.",
-        "severity": "High",
-        "spread_risk": "High",
-        "organic_treatment": [
-            "Apply NSKE 5% or neem oil (5 ml/litre) into leaf whorls",
-            "Release Telenomus remus (50,000/acre) — specific egg parasitoid for FAW",
-            "Spray Metarhizium rileyi (5 g/litre) — entomopathogenic fungus",
-            "Install pheromone traps (5/acre) for monitoring and mass trapping",
-            "Apply sand + lime mixture (9:1) into whorls",
-        ],
-        "chemical_treatment": [
-            "Spinetoram 11.7% SC (Delegate) — 4 ml/10 litres",
-            "Chlorantraniliprole 18.5% SC (Coragen) — 3 ml/10 litres",
-            "Emamectin Benzoate 5% SG (Proclaim) — 4 g/10 litres",
-            "Thiamethoxam 12.6% + Lambda Cyhalothrin 9.5% ZC (Alika) — 0.5 ml/litre",
-        ],
-        "dosage": "Spinetoram: 80 ml/acre in 200 litres. Spray into whorls targeting early-instar larvae. Rotate mode of action every spray.",
-        "prevention": [
-            "Intercrop with pulses or cowpea to reduce FAW incidence",
-            "Use pheromone traps for early warning",
-            "Plough and destroy crop residues promptly after harvest",
-            "Follow ICAR recommended IPM package for FAW",
-            "Plant trap crop borders (Napier grass) around maize fields",
-        ],
-    },
-    "Maize___Ear_Rot": {
-        "disease_name": "Maize Ear Rot",
-        "crop": "Maize",
-        "symptoms": [
-            "White, pink, or blue-green mould on ear surface",
-            "Kernels show discolouration and rotting",
-            "Soft, mushy kernels with foul or musty smell",
-            "Mycotoxin contamination makes grain unsuitable for consumption",
-        ],
-        "cause": "Fusarium verticillioides, Aspergillus flavus, or Stenocarpella maydis — infection through silk channel or insect damage",
-        "description": "Maize ear rot is a complex of fungal diseases causing kernel discolouration, reduced quality, and mycotoxin contamination (fumonisins, aflatoxins). It is particularly serious in stored grain. Ear rot can cause 10–30% yield loss and makes grain dangerous for food and feed.",
-        "severity": "High",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Spray Trichoderma viride (4 g/litre) at silk emergence",
-            "Ensure good husk coverage over ear tip — tight husks reduce infection",
-            "Harvest at physiological maturity — avoid delayed harvest",
-            "Dry grain to below 15% moisture immediately after harvest",
-        ],
-        "chemical_treatment": [
-            "Carbendazim 50% WP (Bavistin) — 1 g/litre spray at silk stage",
-            "Mancozeb 75% WP (Dithane M-45) — 2.5 g/litre at silk stage",
-        ],
-        "dosage": "Carbendazim: 200 g/acre in 200 litres. Spray at 50% silking. Efficacy is limited once infection is inside the ear.",
-        "prevention": [
-            "Harvest promptly — don't leave mature ears in field during rains",
-            "Dry grain rapidly to <14% moisture for safe storage",
-            "Control ear borers and FAW — insect damage is primary entry point",
-            "Grow hybrids with good husk coverage and ear rot tolerance",
-            "Store grain in clean, dry, well-ventilated structures",
-        ],
-    },
-    "Maize___Stem_Borer": {
-        "disease_name": "Maize Stem Borer",
-        "crop": "Maize",
-        "symptoms": [
-            "Dead heart in young plants — central leaf whorl wilts and dries",
-            "Pin holes on young leaves in a row (shot-hole damage from boring)",
-            "Stem shows tunnelling when split open",
-            "Frass pushed out from bore holes on stem",
-        ],
-        "cause": "Chilo partellus (spotted stem borer) — larvae bore into stems and feed on internal tissue",
-        "description": "Maize stem borer is the most serious insect pest of maize in India. Larvae kill the growing point causing dead hearts, then tunnel through stems reducing plant strength and nutrient transport. Yield losses of 25–40% in kharif maize.",
-        "severity": "High",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Release Trichogramma chilonis (1 lakh eggs/acre) at 15-day intervals",
-            "Apply Bacillus thuringiensis (Bt) spray (2 g/litre) into whorls",
-            "Spray NSKE 5% at 10-day intervals from germination",
-            "Install light traps for moth monitoring",
-        ],
-        "chemical_treatment": [
-            "Carbofuran 3% CG (Furadan) — 4–5 granules per whorl at 15–20 DAS",
-            "Fipronil 0.3% GR — 6–8 kg/acre into leaf whorls",
-            "Chlorantraniliprole 0.4% GR (Ferterra) — 4 kg/acre",
-            "Emamectin Benzoate 5% SG (Proclaim) — 4 g/10 litres spray",
-        ],
-        "dosage": "Carbofuran granules: 4–5 granules per whorl at 15 and 30 DAS. Apply in morning when leaves are dewy for granules to settle.",
-        "prevention": [
-            "Timely sowing — early sowing escapes peak borer activity",
-            "Remove and destroy crop stubbles after harvest",
-            "Intercrop with cowpea or beans to reduce borer pressure",
-            "Use resistant/tolerant hybrids where available",
-        ],
+        "severity": "high",
+        "is_healthy": False,
     },
 
-    # ═══════════════════════════════════════════════════════════════════
-    #   ADDITIONAL SUGARCANE DISEASES
-    # ═══════════════════════════════════════════════════════════════════
-    "Sugarcane___Mosaic": {
-        "disease_name": "Sugarcane Mosaic",
+    "cotton_grey_mildew": {
+        "name": "Cotton Grey Mildew",
+        "crop": "Cotton",
+        "description": "Caused by Ramularia areola, grey mildew produces angular pale-green spots on leaves that develop greyish white mold on the lower surface. It is rampant in rainy seasons.",
+        "symptoms": [
+            "Angular pale-green to yellow spots on upper leaf surface",
+            "Greyish-white powdery growth on underside of spots",
+            "Spots turn reddish-brown to grey",
+            "Defoliation under heavy infection",
+            "Reduction in boll size",
+        ],
+        "treatment": {
+            "organic": [
+                "Remove and destroy infected leaves",
+                "Spray copper-based fungicide preventively",
+            ],
+            "chemical": [
+                "Carbendazim 50% WP @ 1 g/litre",
+                "Mancozeb 75% WP @ 2.5 g/litre",
+                "Thiophanate methyl 70% WP @ 1.5 g/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Bavistin (BASF)", "Dithane M-45 (UPL)", "Roko (Rallis)"],
+        },
+        "prevention": [
+            "Proper spacing for air circulation",
+            "Timely defoliation sprays before harvest",
+            "Balance nitrogen fertilisation",
+        ],
+        "severity": "low",
+        "is_healthy": False,
+    },
+
+    "cotton_healthy": {
+        "name": "Cotton Healthy",
+        "crop": "Cotton",
+        "description": "The crop is healthy with no visible disease. Plants show normal dark-green foliage, good branching and boll development.",
+        "symptoms": [],
+        "treatment": {
+            "organic": [],
+            "chemical": [],
+            "dosage_per_acre": None,
+            "indian_brands": [],
+        },
+        "prevention": [
+            "Monitor regularly for bollworm, whitefly and mites",
+            "Apply scheduled fertiliser doses",
+            "Maintain drip/furrow irrigation schedule",
+        ],
+        "severity": "none",
+        "is_healthy": True,
+    },
+
+    "cotton_leaf_spot": {
+        "name": "Cotton Leaf Spot",
+        "crop": "Cotton",
+        "description": "Caused by Cercospora gossypina, Alternaria spp. and other fungi, leaf spot diseases produce various-sized brown spots on cotton leaves causing premature defoliation and reduced yield.",
+        "symptoms": [
+            "Brown to reddish-brown spots of varying sizes on leaves",
+            "Concentric rings may be visible in some spots",
+            "Spots may coalesce to form large necrotic patches",
+            "Premature leaf drop",
+            "Reduced boll retention",
+        ],
+        "treatment": {
+            "organic": [
+                "Spray 1% Bordeaux mixture",
+                "Neem oil 2% + 0.1% spreader spray",
+            ],
+            "chemical": [
+                "Mancozeb 75% WP @ 2.5 g/litre",
+                "Copper oxychloride 50% WP @ 3 g/litre",
+                "Propiconazole 25% EC @ 1 ml/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Dithane M-45 (UPL)", "Blitox (Bayer)", "Tilt (Syngenta)"],
+        },
+        "prevention": [
+            "Balanced fertilisation avoiding excess nitrogen",
+            "Regular field scouting from 40 DAS",
+            "Remove and compost fallen leaves",
+        ],
+        "severity": "medium",
+        "is_healthy": False,
+    },
+
+    # ─────────────────── MAIZE (5) ───────────────────
+
+    "maize_cercospora_leaf_spot": {
+        "name": "Maize Grey Leaf Spot (Cercospora)",
+        "crop": "Maize",
+        "description": "Caused by Cercospora zeae-maydis and C. zeina, grey leaf spot produces rectangular lesions limited by leaf veins that turn tan to grey under humid conditions.",
+        "symptoms": [
+            "Rectangular lesions limited by leaf veins — light brown initially",
+            "Lesions turn grey to tan with distinct margins",
+            "Lesions run parallel to leaf veins",
+            "Severe infection causes leaf blight and lodging",
+            "Disease progresses from lower leaves upward",
+        ],
+        "treatment": {
+            "organic": [
+                "Remove lower infected leaves",
+                "Spray neem oil 2% + 0.1% spreader",
+            ],
+            "chemical": [
+                "Propiconazole 25% EC @ 1 ml/litre",
+                "Azoxystrobin 23% SC @ 1 ml/litre",
+                "Mancozeb 75% WP @ 2.5 g/litre preventive",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Tilt (Syngenta)", "Amistar (Syngenta)", "Dithane M-45 (UPL)"],
+        },
+        "prevention": [
+            "Grow resistant hybrids: DKC 9144, Pioneer P3396",
+            "Crop rotation with soybean or wheat",
+            "Avoid excess plant density",
+            "Minimum tillage to reduce debris breakdown time",
+        ],
+        "severity": "medium",
+        "is_healthy": False,
+    },
+
+    "maize_common_rust": {
+        "name": "Maize Common Rust",
+        "crop": "Maize",
+        "description": "Caused by Puccinia sorghi, common rust produces cinnamon-brown uredial pustules scattered on both leaf surfaces. It is most severe in cool, humid areas.",
+        "symptoms": [
+            "Scattered cinnamon to brick-red uredial pustules on both leaf surfaces",
+            "Pustules oval to elongated",
+            "Yellow chlorotic patches around pustule clusters",
+            "Black teliospores develop late season",
+            "Severe infection causes premature drying",
+        ],
+        "treatment": {
+            "organic": [
+                "Remove heavily infected leaves",
+                "Spray neem oil 3% weekly",
+            ],
+            "chemical": [
+                "Mancozeb 75% WP @ 2.5 g/litre",
+                "Propiconazole 25% EC @ 1 ml/litre",
+                "Tebuconazole 25.9% EC @ 1 ml/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Dithane M-45 (UPL)", "Tilt (Syngenta)", "Folicur (Bayer)"],
+        },
+        "prevention": [
+            "Plant rust-resistant hybrids",
+            "Early sowing to avoid humid, cool conditions",
+            "Balanced potassium application",
+        ],
+        "severity": "medium",
+        "is_healthy": False,
+    },
+
+    "maize_healthy": {
+        "name": "Maize Healthy",
+        "crop": "Maize",
+        "description": "The crop is healthy with dark green, upright leaves and no signs of disease.",
+        "symptoms": [],
+        "treatment": {
+            "organic": [],
+            "chemical": [],
+            "dosage_per_acre": None,
+            "indian_brands": [],
+        },
+        "prevention": [
+            "Scout regularly for fall armyworm, shoot fly and rust",
+            "Apply recommended NPK doses at sowing and topdressing",
+            "Maintain adequate soil moisture at tasselling",
+        ],
+        "severity": "none",
+        "is_healthy": True,
+    },
+
+    "maize_northern_leaf_blight": {
+        "name": "Maize Northern Leaf Blight",
+        "crop": "Maize",
+        "description": "Caused by Setosphaeria turcica (anamorph: Exserohilum turcicum), Northern Leaf Blight produces long, cigar-shaped grey-green to tan lesions that can cause significant yield loss.",
+        "symptoms": [
+            "Elliptical/cigar-shaped lesions 5–15 cm long on leaves",
+            "Lesions grey-green initially, turning tan/grey with age",
+            "Dark sporulation visible in lesion centre under humidity",
+            "Disease progresses from lower leaves upward",
+            "Multiple lesions coalesce causing blighting",
+        ],
+        "treatment": {
+            "organic": [
+                "Remove infected lower leaves early",
+                "Spray Bordeaux mixture 1%",
+            ],
+            "chemical": [
+                "Propiconazole 25% EC @ 1 ml/litre",
+                "Mancozeb 75% WP @ 2.5 g/litre",
+                "Azoxystrobin + Cyproconazole SC @ 1 ml/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Tilt (Syngenta)", "Dithane M-45 (UPL)", "Amistar Top (Syngenta)"],
+        },
+        "prevention": [
+            "Grow resistant hybrids: DHM-117, HQPM-7",
+            "Crop rotation with legumes or wheat",
+            "Deep ploughing to bury infected debris",
+        ],
+        "severity": "high",
+        "is_healthy": False,
+    },
+
+    "maize_southern_leaf_blight": {
+        "name": "Maize Southern Leaf Blight",
+        "crop": "Maize",
+        "description": "Caused by Cochliobolus heterostrophus (Bipolaris maydis), southern leaf blight produces elongated lesions restricted between leaf veins, more common in warm humid lowland areas.",
+        "symptoms": [
+            "Tan to brown rectangular lesions between veins",
+            "Lesions have distinctive tan colour with brown borders",
+            "Entire leaf can be killed under heavy infection",
+            "Dark sporulation on lesion surface in humidity",
+        ],
+        "treatment": {
+            "organic": [
+                "Rotate with non-host crops",
+                "Remove and destroy crop debris",
+            ],
+            "chemical": [
+                "Mancozeb 75% WP @ 2.5 g/litre",
+                "Propiconazole 25% EC @ 1 ml/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Dithane M-45 (UPL)", "Tilt (Syngenta)"],
+        },
+        "prevention": [
+            "Use resistant hybrids",
+            "Ensure proper drainage in the field",
+            "Avoid late sowing in humid areas",
+        ],
+        "severity": "medium",
+        "is_healthy": False,
+    },
+
+    # ─────────────────── SUGARCANE (8) ───────────────────
+
+    "sugarcane_bacterial_blight": {
+        "name": "Sugarcane Bacterial Blight",
         "crop": "Sugarcane",
+        "description": "Caused by Xanthomonas albilineans, leaf scald/bacterial blight produces creamy to white stripes along leaves, pencil-line symptoms and scalding. It is transmitted through contaminated cutting knives.",
         "symptoms": [
-            "Light and dark green mosaic (mottling) pattern on young leaves",
-            "Irregular chlorotic streaks parallel to leaf veins",
-            "Stunted stalk growth in severe infections",
-            "Reduced sucrose content in affected canes",
+            "One or more cream-white pencil-line stripes along leaf length",
+            "Leaf scalding — rapid drying of leaves",
+            "Chlorotic and necrotic streaks on leaves",
+            "Ratoon stunting in severe cases",
+            "Internal discolouration (red) in vascular bundles",
         ],
-        "cause": "Sugarcane Mosaic Virus (ScMV), transmitted by aphids (Rhopalosiphum maidis)",
-        "description": "Sugarcane mosaic is a widespread viral disease in India affecting both sugarcane and sorghum. It reduces photosynthetic efficiency and sugarcane recovery. Yield losses of 10–25% in moderately affected ratoon crops. The virus persists through infected setts.",
-        "severity": "Medium",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Remove and destroy infected plants (roguing) to reduce virus source",
-            "Control aphid vectors with neem oil (5 ml/litre) spray",
-            "Hot water treatment of setts at 52°C for 30 minutes",
-            "Use meristem-cultured (tissue culture) disease-free planting material",
-        ],
-        "chemical_treatment": [
-            "Imidacloprid 17.8% SL (Confidor) — 0.3 ml/litre for aphid control",
-            "Thiamethoxam 25% WG (Actara) — 0.3 g/litre for aphid management",
-            "No direct chemical cure for the virus — manage vector only",
-        ],
-        "dosage": "Imidacloprid: 60 ml/acre in 200 litres. Spray when aphid colonies appear on young cane.",
+        "treatment": {
+            "organic": [
+                "Hot water treatment of setts @ 50°C for 2–3 hours",
+                "Disinfect cutting knives with 1% mercuric chloride / bleach",
+            ],
+            "chemical": [
+                "No effective curative chemical treatment",
+                "Preventive copper spray: Copper oxychloride 3 g/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Blitox (Bayer)"],
+        },
         "prevention": [
-            "Use certified virus-free seed cane",
+            "Use disease-free seed material from approved nurseries",
             "Hot water treatment of setts before planting",
-            "Grow mosaic-resistant varieties (Co 0238, CoLk 94184)",
-            "Rogue out symptomatic plants within 3 months of planting",
-            "Avoid using setts from mosaic-affected fields for propagation",
+            "Use separate planting knives per row to avoid spread",
+            "Grow tolerant varieties: Co-86032, CoH-92",
         ],
+        "severity": "high",
+        "is_healthy": False,
     },
-    "Sugarcane___Red_Rust": {
-        "disease_name": "Sugarcane Red Rust",
+
+    "sugarcane_grassy_shoot": {
+        "name": "Sugarcane Grassy Shoot Disease",
         "crop": "Sugarcane",
+        "description": "Grassy Shoot Disease is caused by a phytoplasma transmitted by leafhopper Pyrilla perpusilla. It results in profuse tillering, producing grassy appearance and severely reduced yield.",
         "symptoms": [
-            "Reddish-brown elongated pustules on leaf surfaces",
-            "Pustules rupture to release rusty-brown spores",
-            "Yellowing around pustules",
-            "Premature drying of affected leaves",
+            "Profuse tillering with numerous thin, weak tillers",
+            "White to pale-yellow discolouration of young leaves",
+            "Tillers fail to produce normal canes",
+            "Entire clump appears bushy and grass-like",
+            "Severely affected plants produce no economic yield",
         ],
-        "cause": "Fungus Puccinia melanocephala — spread by wind-borne spores, favoured by warm humid weather",
-        "description": "Red rust of sugarcane can reduce cane yield by 10–20% and sucrose content by weakening the plant. It is more common on susceptible varieties and during rainy season when humidity is high. Usually more severe on ratoon crops.",
-        "severity": "Medium",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Remove severely infected leaves",
-            "Spray neem oil (5 ml/litre) at first symptom",
-            "Apply Trichoderma viride (4 g/litre) foliar spray",
-        ],
-        "chemical_treatment": [
-            "Propiconazole 25% EC (Tilt) — 1 ml/litre",
-            "Mancozeb 75% WP (Dithane M-45) — 2.5 g/litre",
-            "Triadimefon 25% WP (Bayleton) — 1 g/litre",
-        ],
-        "dosage": "Propiconazole: 200 ml/acre in 200 litres. Spray at first symptoms and repeat after 15 days if needed.",
+        "treatment": {
+            "organic": [
+                "Remove and destroy affected stools immediately",
+                "Biocontrol of leafhoppers using entomopathogenic fungi",
+            ],
+            "chemical": [
+                "No chemical cure for phytoplasma",
+                "Control leafhopper vector: Imidacloprid 200 SL @ 0.5 ml/litre",
+                "Thiamethoxam 25% WG @ 0.3 g/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Confidor (Bayer)", "Actara (Syngenta)"],
+        },
         "prevention": [
-            "Grow rust-resistant varieties",
-            "Avoid ratooning susceptible varieties beyond 2 cycles",
-            "Maintain balanced fertilisation",
+            "Use disease-free seed from certified nurseries",
+            "Sett treatment with hot water @ 52°C for 30 minutes",
+            "Grow tolerant varieties: Co-7704, CoLk-8001",
+            "Control leafhopper population regularly",
         ],
+        "severity": "high",
+        "is_healthy": False,
     },
-    "Sugarcane___Yellow_Rust": {
-        "disease_name": "Sugarcane Yellow Rust",
+
+    "sugarcane_healthy": {
+        "name": "Sugarcane Healthy",
         "crop": "Sugarcane",
-        "symptoms": [
-            "Yellow to orange pustules on underside of leaves",
-            "Pustules appear in clusters on lower leaves first",
-            "Leaf yellowing and premature senescence",
-        ],
-        "cause": "Fungus Puccinia kuehnii — spread by wind-borne spores, favoured by cool wet conditions",
-        "description": "Yellow rust (orange rust) of sugarcane is a relatively newer concern in India. It reduces photosynthetic area and can cause 10–15% yield loss in susceptible varieties. The disease is managed similarly to red rust.",
-        "severity": "Medium",
-        "spread_risk": "Medium",
-        "organic_treatment": [
-            "Remove and destroy heavily infected leaves",
-            "Apply Trichoderma viride (4 g/litre) preventively",
-            "Spray neem oil (5 ml/litre)",
-        ],
-        "chemical_treatment": [
-            "Propiconazole 25% EC (Tilt) — 1 ml/litre",
-            "Mancozeb 75% WP (Dithane M-45) — 2.5 g/litre",
-        ],
-        "dosage": "Propiconazole: 200 ml/acre in 200 litres. Spray at first pustule appearance.",
+        "description": "The crop is healthy with dark green, erect leaves and no signs of disease.",
+        "symptoms": [],
+        "treatment": {
+            "organic": [],
+            "chemical": [],
+            "dosage_per_acre": None,
+            "indian_brands": [],
+        },
         "prevention": [
-            "Grow resistant varieties (Co 0238)",
-            "Maintain proper drainage",
-            "Avoid excess nitrogen",
+            "Scout regularly for top shoot borer, red rot and smut",
+            "Apply scheduled fertiliser doses",
+            "Maintain irrigation schedule during dry periods",
         ],
+        "severity": "none",
+        "is_healthy": True,
+    },
+
+    "sugarcane_mosaic": {
+        "name": "Sugarcane Mosaic Virus",
+        "crop": "Sugarcane",
+        "description": "Caused by Sugarcane Mosaic Virus (SCMV, a potyvirus), mosaic disease produces light and dark green mosaic pattern on leaves. It is transmitted by aphid species.",
+        "symptoms": [
+            "Light and dark green mosaic/mottling pattern on leaves",
+            "Leaf edges may show yellowing",
+            "Plant stunting in severe cases",
+            "Pale coloured streaks on young leaves",
+        ],
+        "treatment": {
+            "organic": [
+                "Remove infected plants",
+                "Control aphid vectors with neem oil 3%",
+            ],
+            "chemical": [
+                "No curative treatment for virus",
+                "Aphid control: Thiamethoxam 25% WG @ 0.3 g/litre",
+                "Imidacloprid 17.8% SL @ 0.5 ml/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Actara (Syngenta)", "Confidor (Bayer)"],
+        },
+        "prevention": [
+            "Use virus-free seed material",
+            "Grow resistant varieties: Co-7717, CoLk-94184",
+            "Control aphid population from early growth stages",
+            "Rogue infected plants",
+        ],
+        "severity": "medium",
+        "is_healthy": False,
+    },
+
+    "sugarcane_pokkah_boeng": {
+        "name": "Sugarcane Pokkah Boeng",
+        "crop": "Sugarcane",
+        "description": "Caused by Fusarium moniliforme (F. verticillioides), Pokkah Boeng (Indonesian for 'malformed top') causes irregular chlorosis, leaf twisting and knife-cut symptoms in young spindle leaves.",
+        "symptoms": [
+            "Irregular chlorotic patches on young leaves",
+            "Leaf twisting and puckering",
+            "Knife-cut symptoms on young spindle leaves",
+            "Rotting and death of growing point in severe cases",
+            "Red discolouration of stem tissue (top rot)",
+        ],
+        "treatment": {
+            "organic": [
+                "Remove and destroy severely infected tops",
+                "Apply Trichoderma-based bioagents in soil",
+            ],
+            "chemical": [
+                "Carbendazim 50% WP @ 1 g/litre spray",
+                "Propiconazole 25% EC @ 1 ml/litre foliar spray",
+                "Pour carbendazim solution in leaf whorl @ 0.1%",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Bavistin (BASF)", "Tilt (Syngenta)"],
+        },
+        "prevention": [
+            "Avoid waterlogging in field",
+            "Balanced fertilisation, especially potassium",
+            "Use tolerant varieties: Co-86032, CoSe-96268",
+        ],
+        "severity": "medium",
+        "is_healthy": False,
+    },
+
+    "sugarcane_red_rot": {
+        "name": "Sugarcane Red Rot",
+        "crop": "Sugarcane",
+        "description": "Caused by Colletotrichum falcatum, red rot is the most important disease of sugarcane. It causes reddening of internal stalk tissue with alcohol-like smell and can destroy entire fields.",
+        "symptoms": [
+            "Red discolouration of internal stalk tissue with white patches",
+            "Alcohol-like (fermented) smell from cut cane",
+            "Third and fourth leaves from top show yellowing then drying",
+            "Leaf drooping and shredding",
+            "Moist rot of stalk leading to plant death",
+        ],
+        "treatment": {
+            "organic": [
+                "Remove and destroy infected stools",
+                "Sett treatment with Trichoderma viride @ 4 g/kg",
+                "Hot water treatment of setts @ 54°C for 30 minutes",
+            ],
+            "chemical": [
+                "Carbendazim 50% WP sett treatment @ 0.1% solution (2 g/litre) — 10-minute soak",
+                "Propiconazole 25% EC @ 1 ml/litre foliar spray",
+            ],
+            "dosage_per_acre": "Sett soaking + 200 litres foliar spray per acre",
+            "indian_brands": ["Bavistin (BASF)", "Tilt (Syngenta)"],
+        },
+        "prevention": [
+            "Use red-rot-resistant varieties: CoLk-94184, Co-7527, CoH-119",
+            "Hot water treatment of seed setts",
+            "Drain excess water promptly",
+            "Avoid ratoon crop in confirmed red-rot-positive fields",
+            "Don't transport infected material",
+        ],
+        "severity": "high",
+        "is_healthy": False,
+    },
+
+    "sugarcane_rust": {
+        "name": "Sugarcane Rust",
+        "crop": "Sugarcane",
+        "description": "Caused by Puccinia melanocephala (common rust) or P. kuehnii (orange rust), sugarcane rust produces orange-brown pustules on leaves. It reduces photosynthetic area and cane yield.",
+        "symptoms": [
+            "Small, orange to brown elongated pustules on leaf surface",
+            "Yellow halo around pustules",
+            "Lesions coalesce causing leaf drying in severe cases",
+            "Spots visible on both surfaces but more common on underside",
+        ],
+        "treatment": {
+            "organic": [
+                "Remove severely infected leaves",
+                "Spray neem oil 3% + 0.1% spreader weekly",
+            ],
+            "chemical": [
+                "Propiconazole 25% EC @ 1 ml/litre",
+                "Mancozeb 75% WP @ 2.5 g/litre",
+                "Trifloxystrobin 25% + Tebuconazole 50% WG @ 0.5 g/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Tilt (Syngenta)", "Dithane M-45 (UPL)", "Nativo (Bayer)"],
+        },
+        "prevention": [
+            "Grow resistant varieties: Co-86032, CoS-767",
+            "Avoid late planting during rust-prone season",
+            "Proper spacing for air movement",
+        ],
+        "severity": "medium",
+        "is_healthy": False,
+    },
+
+    "sugarcane_yellow_leaf": {
+        "name": "Sugarcane Yellow Leaf Disease",
+        "crop": "Sugarcane",
+        "description": "Caused by Sugarcane Yellow Leaf Virus (SCYLV, a polerovirus) transmitted by aphid Melanaphis sacchari, yellow leaf disease causes yellowing of midrib and leaf blade with significant yield reduction.",
+        "symptoms": [
+            "Bright yellow colouration of leaf midrib (undersurface) — key symptom",
+            "Yellow colour extends to leaf surface",
+            "Reduced plant vigour and stalk length",
+            "High sucrose loss in affected canes",
+            "Yellowing starts from top leaves and progresses downward",
+        ],
+        "treatment": {
+            "organic": [
+                "Remove and destroy infected plants",
+                "Control aphid vector with neem oil 3%",
+            ],
+            "chemical": [
+                "No curative treatment for virus",
+                "Aphid control: Imidacloprid 17.8% SL @ 0.5 ml/litre",
+                "Thiamethoxam 25% WG @ 0.3 g/litre",
+            ],
+            "dosage_per_acre": "200 litres spray solution per acre",
+            "indian_brands": ["Confidor (Bayer)", "Actara (Syngenta)"],
+        },
+        "prevention": [
+            "Use SCYLV-free seed from certified nurseries",
+            "Grow less-susceptible varieties: CoLk-94184, CoJ-64",
+            "Control aphid vectors from crop establishment",
+        ],
+        "severity": "medium",
+        "is_healthy": False,
     },
 }
 
 
-def get_disease_info(class_key: str) -> dict | None:
-    """Look up disease by class key (e.g. 'Tomato___Late_Blight')."""
-    return DISEASE_DATABASE.get(class_key)
-
-
 def get_all_diseases() -> list[dict]:
-    """Return list of all disease documents."""
     return [
-        {**v, "class_key": k}
-        for k, v in DISEASE_DATABASE.items()
-        if v["disease_name"] != "Healthy"
+        {
+            "key": key,
+            "name": data["name"],
+            "crop": data["crop"],
+            "severity": data["severity"],
+            "is_healthy": data["is_healthy"],
+        }
+        for key, data in DISEASE_CATALOGUE.items()
     ]
 
 
-def get_diseases_by_crop(crop: str) -> list[dict]:
-    """Return diseases for a specific crop."""
-    return [
-        {**v, "class_key": k}
-        for k, v in DISEASE_DATABASE.items()
-        if v["crop"].lower() == crop.lower() and v["disease_name"] != "Healthy"
-    ]
+def get_disease(key: str) -> dict | None:
+    data = DISEASE_CATALOGUE.get(key)
+    if data is None:
+        return None
+    return {"key": key, **data}
 
 
-# Class index mapping — matches training label encoding order
-# Update this after training your model
-CLASS_INDEX_MAP = {i: key for i, key in enumerate(DISEASE_DATABASE.keys())}
-INDEX_CLASS_MAP = {v: k for k, v in CLASS_INDEX_MAP.items()}
+def get_crops() -> list[str]:
+    return sorted({d["crop"] for d in DISEASE_CATALOGUE.values()})
+
+
+def get_class_keys() -> list[str]:
+    return list(DISEASE_CATALOGUE.keys())

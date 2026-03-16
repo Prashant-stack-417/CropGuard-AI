@@ -1,63 +1,51 @@
-"""
-History routes — User prediction history
-"""
+from fastapi import APIRouter, HTTPException, Depends
+from bson import ObjectId
 
-from fastapi import APIRouter, Depends, Query
-from app.auth import require_auth
-from app.database import get_db
+from ..auth import get_current_user
+from ..database import get_db
+from ..models import HistoryItem
 
-router = APIRouter(prefix="/api", tags=["History"])
+router = APIRouter(tags=["history"])
 
 
-@router.get("/history")
-async def get_history(
-    page: int = Query(1, ge=1),
-    limit: int = Query(20, ge=1, le=100),
-    current_user=Depends(require_auth),
-):
-    """
-    Get the current user's prediction history (paginated, newest first).
-    Requires authentication.
-    """
-    db = get_db()
-    user_id = current_user["_id"]
-
-    skip = (page - 1) * limit
-
-    # Count total
-    total = await db.predictions.count_documents({"user_id": user_id})
-
-    # Fetch predictions
-    cursor = (
-        db.predictions.find({"user_id": user_id})
-        .sort("created_at", -1)
-        .skip(skip)
-        .limit(limit)
+def _doc_to_item(doc: dict) -> HistoryItem:
+    return HistoryItem(
+        id=str(doc["_id"]),
+        disease_key=doc["disease_key"],
+        disease_name=doc["disease_name"],
+        crop=doc["crop"],
+        confidence=doc["confidence"],
+        severity=doc["severity"],
+        is_healthy=doc["is_healthy"],
+        image_filename=doc["image_filename"],
+        predicted_at=doc["predicted_at"],
     )
 
-    predictions = []
-    async for doc in cursor:
-        predictions.append(
-            {
-                "prediction_id": str(doc["_id"]),
-                "crop_name": doc.get("crop_name", ""),
-                "disease_name": doc.get("disease_name", ""),
-                "confidence": doc.get("confidence", 0),
-                "severity": doc.get("severity", ""),
-                "status": doc.get("status", ""),
-                "description": doc.get("description", ""),
-                "organic_treatment": doc.get("organic_treatment", []),
-                "chemical_treatment": doc.get("chemical_treatment", []),
-                "dosage": doc.get("dosage", ""),
-                "prevention": doc.get("prevention", []),
-                "filename": doc.get("filename", ""),
-                "created_at": doc.get("created_at", ""),
-            }
-        )
 
-    return {
-        "total": total,
-        "page": page,
-        "limit": limit,
-        "predictions": predictions,
-    }
+@router.get("/history", response_model=list[HistoryItem])
+async def get_history(current_user: dict = Depends(get_current_user)):
+    db = get_db()
+    cursor = db.predictions.find(
+        {"user_email": current_user["sub"]},
+        sort=[("predicted_at", -1)],
+    )
+    docs = await cursor.to_list(length=100)
+    return [_doc_to_item(d) for d in docs]
+
+
+@router.delete("/history/{item_id}", status_code=204)
+async def delete_history_item(
+    item_id: str,
+    current_user: dict = Depends(get_current_user),
+):
+    db = get_db()
+    try:
+        oid = ObjectId(item_id)
+    except Exception:
+        raise HTTPException(status_code=422, detail="Invalid item ID format")
+
+    result = await db.predictions.delete_one(
+        {"_id": oid, "user_email": current_user["sub"]}
+    )
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="History item not found")

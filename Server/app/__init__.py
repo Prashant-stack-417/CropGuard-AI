@@ -1,1 +1,0 @@
-# CropGuard AI — FastAPI Backend

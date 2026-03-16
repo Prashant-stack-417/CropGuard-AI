@@ -1,17 +1,20 @@
-"""
-Pydantic schemas for request/response validation.
-"""
-
-from datetime import datetime
-from typing import List, Optional
-from pydantic import BaseModel, EmailStr, Field
+from typing import Any, Optional
+from pydantic import BaseModel, EmailStr, field_validator
 
 
-# ── Auth ──────────────────────────────────────────────────────────────
+# ---------- Auth ----------
+
 class RegisterRequest(BaseModel):
-    name: str = Field(..., min_length=2, max_length=100)
+    name: str
     email: EmailStr
-    password: str = Field(..., min_length=6, max_length=128)
+    password: str
+
+    @field_validator("password")
+    @classmethod
+    def password_min_length(cls, v: str) -> str:
+        if len(v) < 6:
+            raise ValueError("Password must be at least 6 characters")
+        return v
 
 
 class LoginRequest(BaseModel):
@@ -19,62 +22,64 @@ class LoginRequest(BaseModel):
     password: str
 
 
-class AuthResponse(BaseModel):
-    token: str
-    user: dict
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
 
 
-# ── Disease & Treatment ──────────────────────────────────────────────
+# ---------- Prediction ----------
+
 class TreatmentInfo(BaseModel):
-    organic: List[str]
-    chemical: List[str]
-    dosage: str
-    application_method: str = ""
+    organic: list[str]
+    chemical: list[str]
+    dosage_per_acre: Optional[str] = None
+    indian_brands: list[str] = []
 
 
-class DiseaseDocument(BaseModel):
+class PredictResponse(BaseModel):
+    disease_key: str
     disease_name: str
     crop: str
-    symptoms: List[str]
-    cause: str
+    confidence: float
     description: str
-    severity: str  # Low / Medium / High
-    organic_treatment: List[str]
-    chemical_treatment: List[str]
-    dosage: str
-    prevention: List[str]
-    spread_risk: str  # Low / Medium / High
-
-
-# ── Prediction ────────────────────────────────────────────────────────
-class PredictionResponse(BaseModel):
-    prediction_id: Optional[str] = None
-    crop_name: str
-    disease_name: str
-    confidence: int
+    symptoms: list[str]
+    treatment: TreatmentInfo
+    prevention: list[str]
     severity: str
-    spread_risk: str
-    description: str
-    symptoms: List[str]
-    organic_treatment: List[str]
-    chemical_treatment: List[str]
-    dosage: str
-    prevention: List[str]
-    status: str  # Healthy / Diseased
-    created_at: Optional[datetime] = None
+    is_healthy: bool
 
 
-# ── History ───────────────────────────────────────────────────────────
+# ---------- History ----------
+
 class HistoryItem(BaseModel):
-    prediction_id: str
-    crop_name: str
+    id: str
+    disease_key: str
     disease_name: str
-    confidence: int
+    crop: str
+    confidence: float
     severity: str
-    status: str
-    created_at: datetime
+    is_healthy: bool
+    image_filename: str
+    predicted_at: str
 
 
-class HistoryResponse(BaseModel):
-    total: int
-    predictions: List[HistoryItem]
+# ---------- Disease catalogue ----------
+
+class DiseaseListItem(BaseModel):
+    key: str
+    name: str
+    crop: str
+    severity: str
+    is_healthy: bool
+
+
+class DiseaseDetail(BaseModel):
+    key: str
+    name: str
+    crop: str
+    description: str
+    symptoms: list[str]
+    treatment: dict[str, Any]
+    prevention: list[str]
+    severity: str
+    is_healthy: bool
