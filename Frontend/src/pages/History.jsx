@@ -26,6 +26,7 @@ const History = () => {
     const [predictions, setPredictions] = useState([]);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [openingId, setOpeningId] = useState("");
     const [error, setError] = useState("");
     const [page, setPage] = useState(1);
 
@@ -61,6 +62,35 @@ const History = () => {
             });
         } catch {
             return dateStr;
+        }
+    };
+
+    const openPredictionDetail = async (pred) => {
+        if (!pred?.crop_name || !pred?.disease_name || !pred?.prediction_id) {
+            setError("This history entry has incomplete data.");
+            return;
+        }
+
+        setError("");
+        setOpeningId(pred.prediction_id);
+
+        try {
+            const res = await api.getDiseases(pred.crop_name);
+            const diseases = res.data?.diseases || [];
+            const match = diseases.find(
+                (d) => d.disease_name?.toLowerCase() === pred.disease_name?.toLowerCase()
+            );
+
+            if (!match?.class_key) {
+                setError("Details not found for this history item.");
+                return;
+            }
+
+            navigate(`/disease/${match.class_key}`);
+        } catch {
+            setError("Failed to open details. Please try again.");
+        } finally {
+            setOpeningId("");
         }
     };
 
@@ -121,8 +151,17 @@ const History = () => {
                                             p: 3,
                                             border: "1px solid rgba(0,0,0,0.06)",
                                             cursor: "pointer",
+                                            opacity: openingId === pred.prediction_id ? 0.75 : 1,
                                         }}
-                                        onClick={() => {/* could navigate to detail */ }}
+                                        onClick={() => openPredictionDetail(pred)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter" || e.key === " ") {
+                                                e.preventDefault();
+                                                openPredictionDetail(pred);
+                                            }
+                                        }}
+                                        role="button"
+                                        tabIndex={0}
                                     >
                                         <Stack
                                             direction={{ xs: "column", sm: "row" }}
