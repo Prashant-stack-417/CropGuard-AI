@@ -49,6 +49,7 @@ class DiseaseDocument(BaseModel):
 # ── Prediction ────────────────────────────────────────────────────────
 class PredictionResponse(BaseModel):
     prediction_id: Optional[str] = None
+    class_key: Optional[str] = None
     crop_name: str
     disease_name: str
     confidence: int
@@ -67,6 +68,7 @@ class PredictionResponse(BaseModel):
 # ── History ───────────────────────────────────────────────────────────
 class HistoryItem(BaseModel):
     prediction_id: str
+    class_key: Optional[str] = None
     crop_name: str
     disease_name: str
     confidence: int

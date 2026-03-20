@@ -75,6 +75,11 @@ const History = () => {
         setOpeningId(pred.prediction_id);
 
         try {
+            if (pred.class_key) {
+                navigate(`/disease/${pred.class_key}`);
+                return;
+            }
+
             const res = await api.getDiseases(pred.crop_name);
             const diseases = res.data?.diseases || [];
             const match = diseases.find(

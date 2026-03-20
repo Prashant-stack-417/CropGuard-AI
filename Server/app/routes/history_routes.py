@@ -40,6 +40,7 @@ async def get_history(
         predictions.append(
             {
                 "prediction_id": str(doc["_id"]),
+                "class_key": doc.get("class_key", ""),
                 "crop_name": doc.get("crop_name", ""),
                 "disease_name": doc.get("disease_name", ""),
                 "confidence": doc.get("confidence", 0),
