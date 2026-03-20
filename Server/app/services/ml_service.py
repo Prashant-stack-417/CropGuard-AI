@@ -2,7 +2,7 @@
 ML Inference Service
 ---------------------
 Loads the trained CNN model (PyTorch MobileNetV2) and runs prediction
-on uploaded images.  Falls back to demo mode when no model file is present.
+on uploaded images.  Requires a valid model file to operate.
 
 The model is trained via notebooks/train_model.ipynb and exported as:
   - model/crop_disease_model.pt    (TorchScript model)
@@ -11,7 +11,7 @@ The model is trained via notebooks/train_model.ipynb and exported as:
 
 import io
 import json
-import random
+
 import logging
 from pathlib import Path
 
@@ -226,15 +226,15 @@ def predict(image_bytes: bytes) -> dict:
     """
     Run disease prediction on image bytes.
     Returns a dict with crop_name, disease_name, confidence, and treatment info.
+    Raises RuntimeError if the ML model is not loaded.
     """
+    if _model is None:
+        raise RuntimeError(
+            "ML model is not loaded. Ensure the model file exists at the configured path."
+        )
+
     image = Image.open(io.BytesIO(image_bytes))
-
-    if _model is not None:
-        result = _run_real_inference(image)
-    else:
-        result = _run_demo_inference()
-
-    return result
+    return _run_real_inference(image)
 
 
 def _run_real_inference(image: Image.Image) -> dict:
@@ -258,11 +258,11 @@ def _run_real_inference(image: Image.Image) -> dict:
             class_idx = int(np.argmax(probs))
             confidence = float(probs[class_idx])
         except Exception as e:
-            logger.error(f"Inference failed: {e}")
-            return _run_demo_inference()
+            logger.error(f"TensorFlow inference failed: {e}")
+            raise RuntimeError(f"Inference failed: {e}") from e
     except Exception as e:
         logger.error(f"Inference failed: {e}")
-        return _run_demo_inference()
+        raise RuntimeError(f"Inference failed: {e}") from e
 
     # Map index → class name → disease database key
     if _class_map:
@@ -320,14 +320,7 @@ def _run_real_inference(image: Image.Image) -> dict:
     return _build_result(disease_info, confidence_pct)
 
 
-def _run_demo_inference() -> dict:
-    """Demo mode: return realistic random result."""
-    logger.info("🎭 DEMO mode — returning random disease result")
-    keys = list(DISEASE_DATABASE.keys())
-    class_key = random.choice(keys)
-    disease_info = DISEASE_DATABASE[class_key]
-    confidence = random.randint(78, 97)
-    return _build_result(disease_info, confidence)
+
 
 
 def _build_result(disease_info: dict, confidence: int) -> dict:

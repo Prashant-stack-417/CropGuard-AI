@@ -76,3 +76,5 @@ instance/
 
 # Jupyter
 .ipynb_checkpoints/
+
+*.md

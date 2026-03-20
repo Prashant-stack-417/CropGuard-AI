@@ -36,7 +36,7 @@ async def lifespan(app: FastAPI):
     if model_loaded:
         logger.info("✅ ML model loaded — real inference active")
     else:
-        logger.info("🎭 ML model not found — running in DEMO mode")
+        logger.error("❌ ML model not found — /api/predict will return errors")
 
     yield
 
@@ -83,7 +83,6 @@ async def health_check():
         "service": "CropGuard AI",
         "version": "1.0.0",
         "model_loaded": is_model_loaded(),
-        "mode": "inference" if is_model_loaded() else "demo",
     }
 
 
@@ -91,7 +90,7 @@ async def health_check():
 async def api_status():
     return {
         "api": "running",
-        "model": "loaded" if is_model_loaded() else "demo_mode",
+        "model": "loaded" if is_model_loaded() else "not_loaded",
         "endpoints": [
             "POST /api/register",
             "POST /api/login",

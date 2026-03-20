@@ -13,9 +13,10 @@ import LocalFloristOutlined from "@mui/icons-material/LocalFloristOutlined";
 import ScienceOutlined from "@mui/icons-material/ScienceOutlined";
 import WarningAmberOutlined from "@mui/icons-material/WarningAmberOutlined";
 import VerifiedOutlined from "@mui/icons-material/VerifiedOutlined";
+import BoltOutlined from "@mui/icons-material/BoltOutlined";
 
-const Results = ({ result, isLoading }) => {
-  if (!result && !isLoading) return null;
+const Results = ({ result, isLoading, isRealtimeActive, isRealtimeAnalyzing }) => {
+  if (!result && !isLoading && !isRealtimeActive) return null;
 
   const getConfidenceColor = (c) => {
     if (c >= 80) return "#5a9a3c";
@@ -87,10 +88,10 @@ const Results = ({ result, isLoading }) => {
             className="animate-fade-in-up"
             sx={{ fontSize: { xs: "1.8rem", sm: "2.2rem" } }}
           >
-            Detection Results
+            {isRealtimeActive ? "Real-Time Detection" : "Detection Results"}
           </Typography>
 
-          {isLoading ? (
+          {isLoading && !result ? (
             <Paper
               elevation={0}
               className="animate-scale-in"
@@ -99,6 +100,18 @@ const Results = ({ result, isLoading }) => {
               <CircularProgress size={56} thickness={3} sx={{ color: "#4a7c59", mb: 3 }} />
               <Typography variant="h6" fontWeight={600} gutterBottom>Looking at your photo...</Typography>
               <Typography color="text.secondary" variant="body2">Hang tight — we're checking the leaf for signs of disease</Typography>
+            </Paper>
+          ) : !result && isRealtimeActive ? (
+            <Paper
+              elevation={0}
+              className="animate-scale-in"
+              sx={{ p: 6, textAlign: "center", width: "100%", maxWidth: 460, border: "1px solid rgba(0,0,0,0.06)" }}
+            >
+              <CircularProgress size={56} thickness={3} sx={{ color: "#4a7c59", mb: 3 }} />
+              <Typography variant="h6" fontWeight={600} gutterBottom>Live camera active</Typography>
+              <Typography color="text.secondary" variant="body2">
+                We are analyzing frames continuously. Hold the leaf steady for clearer results.
+              </Typography>
             </Paper>
           ) : (
             <Paper
@@ -110,16 +123,30 @@ const Results = ({ result, isLoading }) => {
               <Box sx={{ bgcolor: result.status === "Healthy" ? "#eaf5ea" : "#fdf0ee", borderBottom: "1px solid rgba(0,0,0,0.06)", p: 3 }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                   <Typography variant="h6" fontWeight={700}>Analysis Complete</Typography>
-                  <Chip
-                    label={result.status}
-                    icon={result.status === "Healthy" ? <VerifiedOutlined sx={{ fontSize: 16 }} /> : <WarningAmberOutlined sx={{ fontSize: 16 }} />}
-                    sx={{
-                      fontWeight: 600,
-                      bgcolor: result.status === "Healthy" ? "#d7ecd7" : "#fde0db",
-                      color: result.status === "Healthy" ? "#3a7a3a" : "#b04030",
-                      "& .MuiChip-icon": { color: "inherit" },
-                    }}
-                  />
+                  <Stack direction="row" spacing={1}>
+                    {isRealtimeActive ? (
+                      <Chip
+                        label={isRealtimeAnalyzing ? "Analyzing" : "Live"}
+                        icon={<BoltOutlined sx={{ fontSize: 16 }} />}
+                        sx={{
+                          fontWeight: 600,
+                          bgcolor: "#e6f1e5",
+                          color: "#2f6d3f",
+                          "& .MuiChip-icon": { color: "inherit" },
+                        }}
+                      />
+                    ) : null}
+                    <Chip
+                      label={result.status}
+                      icon={result.status === "Healthy" ? <VerifiedOutlined sx={{ fontSize: 16 }} /> : <WarningAmberOutlined sx={{ fontSize: 16 }} />}
+                      sx={{
+                        fontWeight: 600,
+                        bgcolor: result.status === "Healthy" ? "#d7ecd7" : "#fde0db",
+                        color: result.status === "Healthy" ? "#3a7a3a" : "#b04030",
+                        "& .MuiChip-icon": { color: "inherit" },
+                      }}
+                    />
+                  </Stack>
                 </Stack>
               </Box>
 

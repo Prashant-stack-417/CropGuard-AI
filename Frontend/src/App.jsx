@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -81,28 +81,64 @@ function HomePage() {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [detectionResult, setDetectionResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRealtimeActive, setIsRealtimeActive] = useState(false);
+  const [isRealtimeAnalyzing, setIsRealtimeAnalyzing] = useState(false);
+  const liveRequestInFlight = useRef(false);
 
-  const detectDisease = async (file) => {
-    setIsLoading(true);
-    setDetectionResult(null);
+  const detectDisease = async (file, options = { live: false }) => {
+    const { live } = options;
+
+    if (live) {
+      if (liveRequestInFlight.current) return;
+      liveRequestInFlight.current = true;
+      setIsRealtimeAnalyzing(true);
+    } else {
+      setIsLoading(true);
+      setDetectionResult(null);
+    }
+
     try {
       const res = await api.predict(file);
       setDetectionResult(res.data);
-      setTimeout(() => {
-        document.getElementById("results")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 100);
+
+      if (!live) {
+        setTimeout(() => {
+          document.getElementById("results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+      }
     } catch (error) {
       console.error("Detection failed:", error);
-      alert(`Detection failed: ${error.response?.data?.detail || error.message}`);
+      if (!live) {
+        alert(`Detection failed: ${error.response?.data?.detail || error.message}`);
+      }
     } finally {
-      setIsLoading(false);
+      if (live) {
+        liveRequestInFlight.current = false;
+        setIsRealtimeAnalyzing(false);
+      } else {
+        setIsLoading(false);
+      }
     }
   };
 
   const handleImageUpload = (imageData, file) => {
     setUploadedImage(imageData);
     setDetectionResult(null);
+    setIsRealtimeActive(false);
+    setIsRealtimeAnalyzing(false);
     if (file) detectDisease(file);
+  };
+
+  const handleRealtimeFrame = (frameFile) => {
+    detectDisease(frameFile, { live: true });
+  };
+
+  const handleRealtimeStateChange = (isActive) => {
+    setIsRealtimeActive(isActive);
+    if (!isActive) {
+      setIsRealtimeAnalyzing(false);
+      liveRequestInFlight.current = false;
+    }
   };
 
   const handleUploadClick = () => {
@@ -112,10 +148,21 @@ function HomePage() {
   return (
     <>
       <Hero onUploadClick={handleUploadClick} />
-      <Upload onImageUpload={handleImageUpload} uploadedImage={uploadedImage} />
-      {(detectionResult || isLoading) && (
+      <Upload
+        onImageUpload={handleImageUpload}
+        uploadedImage={uploadedImage}
+        onRealtimeFrame={handleRealtimeFrame}
+        onRealtimeStateChange={handleRealtimeStateChange}
+        isRealtimeActive={isRealtimeActive}
+      />
+      {(detectionResult || isLoading || isRealtimeActive) && (
         <Box id="results">
-          <Results result={detectionResult} isLoading={isLoading} />
+          <Results
+            result={detectionResult}
+            isLoading={isLoading}
+            isRealtimeActive={isRealtimeActive}
+            isRealtimeAnalyzing={isRealtimeAnalyzing}
+          />
         </Box>
       )}
       <HowItWorks />

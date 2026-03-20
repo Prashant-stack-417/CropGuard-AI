@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -6,15 +6,52 @@ import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
+import Alert from "@mui/material/Alert";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import CloudUploadOutlined from "@mui/icons-material/CloudUploadOutlined";
 import CheckCircleOutline from "@mui/icons-material/CheckCircleOutline";
 import LocalFloristOutlined from "@mui/icons-material/LocalFloristOutlined";
 import PhotoCameraOutlined from "@mui/icons-material/PhotoCameraOutlined";
 import DeleteOutlineOutlined from "@mui/icons-material/DeleteOutlineOutlined";
+import VideocamOutlined from "@mui/icons-material/VideocamOutlined";
+import StopCircleOutlined from "@mui/icons-material/StopCircleOutlined";
 
-const Upload = ({ onImageUpload, uploadedImage }) => {
+const Upload = ({
+  onImageUpload,
+  uploadedImage,
+  onRealtimeFrame,
+  onRealtimeStateChange,
+  isRealtimeActive,
+}) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [mode, setMode] = useState("upload");
+  const [cameraError, setCameraError] = useState("");
   const fileInputRef = useRef(null);
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
+  const captureIntervalRef = useRef(null);
+  const canvasRef = useRef(null);
+
+  const stopRealtime = useCallback(() => {
+    if (captureIntervalRef.current) {
+      clearInterval(captureIntervalRef.current);
+      captureIntervalRef.current = null;
+    }
+
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+
+    onRealtimeStateChange(false);
+  }, [onRealtimeStateChange]);
+
+  useEffect(() => () => stopRealtime(), [stopRealtime]);
 
   const handleDragOver = (e) => { e.preventDefault(); setIsDragging(true); };
   const handleDragLeave = (e) => { e.preventDefault(); setIsDragging(false); };
@@ -41,6 +78,94 @@ const Upload = ({ onImageUpload, uploadedImage }) => {
     if (file) handleFileSelect(file);
   };
 
+  const captureFrameAndPredict = useCallback(() => {
+    if (!videoRef.current || !canvasRef.current || !onRealtimeFrame) return;
+    if (videoRef.current.videoWidth === 0 || videoRef.current.videoHeight === 0) return;
+
+    const canvas = canvasRef.current;
+    const video = videoRef.current;
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return;
+
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) return;
+        const frameFile = new File([blob], `realtime-frame-${Date.now()}.jpg`, { type: "image/jpeg" });
+        onRealtimeFrame(frameFile);
+      },
+      "image/jpeg",
+      0.88
+    );
+  }, [onRealtimeFrame]);
+
+  const getCameraErrorMessage = (error) => {
+    if (!window.isSecureContext) {
+      return "Camera requires a secure context. Use HTTPS or localhost and try again.";
+    }
+
+    if (error?.name === "NotAllowedError" || error?.name === "SecurityError") {
+      return "Camera access was blocked. Allow camera permission in browser site settings and OS privacy settings for your browser, then retry.";
+    }
+
+    if (error?.name === "NotFoundError" || error?.name === "DevicesNotFoundError") {
+      return "No camera device was found. Connect a camera and try again.";
+    }
+
+    if (error?.name === "NotReadableError" || error?.name === "TrackStartError") {
+      return "Camera is in use by another app. Close other apps using the camera and retry.";
+    }
+
+    if (error?.name === "OverconstrainedError") {
+      return "Camera constraints were not supported on this device. Try another camera or browser.";
+    }
+
+    return "Unable to access the camera. Please check permissions and try again.";
+  };
+
+  const startRealtime = async () => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setCameraError("This browser does not support camera access.");
+      return;
+    }
+
+    try {
+      setCameraError("");
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+        audio: false,
+      });
+
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+
+      onImageUpload(null);
+      onRealtimeStateChange(true);
+
+      captureFrameAndPredict();
+      captureIntervalRef.current = setInterval(captureFrameAndPredict, 1800);
+    } catch (error) {
+      console.error("Unable to start camera:", error);
+      setCameraError(getCameraErrorMessage(error));
+      stopRealtime();
+    }
+  };
+
+  const handleModeChange = (_event, newMode) => {
+    if (!newMode) return;
+    setMode(newMode);
+    if (newMode === "upload") {
+      stopRealtime();
+    }
+  };
+
   const tips = [
     { icon: CheckCircleOutline, title: "Good Lighting", desc: "Natural daylight works best", color: "#4a7c59" },
     { icon: LocalFloristOutlined, title: "Single Leaf", desc: "One leaf at a time for accuracy", color: "#6a9b5e" },
@@ -57,31 +182,53 @@ const Upload = ({ onImageUpload, uploadedImage }) => {
               Upload Your Crop Photo
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Drop an image here or click to browse — we'll take it from there
+              Drop an image here or use live camera mode for real-time analysis
             </Typography>
           </Box>
+
+          <ToggleButtonGroup
+            value={mode}
+            exclusive
+            onChange={handleModeChange}
+            color="primary"
+            className="animate-fade-in-up"
+            sx={{
+              bgcolor: "#f3f6ef",
+              borderRadius: 2,
+              border: "1px solid rgba(74, 124, 89, 0.12)",
+              "& .MuiToggleButton-root": {
+                px: 2.5,
+                py: 1,
+                border: 0,
+                fontWeight: 600,
+              },
+            }}
+          >
+            <ToggleButton value="upload">Upload Image</ToggleButton>
+            <ToggleButton value="realtime">Real-Time Camera</ToggleButton>
+          </ToggleButtonGroup>
 
           {/* Upload zone */}
           <Paper
             elevation={0}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
+            onDragOver={mode === "upload" ? handleDragOver : undefined}
+            onDragLeave={mode === "upload" ? handleDragLeave : undefined}
+            onDrop={mode === "upload" ? handleDrop : undefined}
+            onClick={mode === "upload" ? () => fileInputRef.current?.click() : undefined}
             className="animate-fade-in-up"
             sx={{
               width: "100%",
               maxWidth: 640,
               p: { xs: 4, sm: 5 },
               border: "2px dashed",
-              borderColor: isDragging ? "#4a7c59" : "#d4ddd0",
-              bgcolor: isDragging ? "rgba(74, 124, 89, 0.04)" : "#fafaf7",
+              borderColor: mode === "upload" && isDragging ? "#4a7c59" : "#d4ddd0",
+              bgcolor: mode === "upload" && isDragging ? "rgba(74, 124, 89, 0.04)" : "#fafaf7",
               borderRadius: 3,
-              cursor: "pointer",
+              cursor: mode === "upload" ? "pointer" : "default",
               transition: "all 0.25s ease",
               "&:hover": {
-                borderColor: "#8db580",
-                bgcolor: "rgba(74, 124, 89, 0.02)",
+                borderColor: mode === "upload" ? "#8db580" : "#d4ddd0",
+                bgcolor: mode === "upload" ? "rgba(74, 124, 89, 0.02)" : "#fafaf7",
               },
             }}
           >
@@ -93,7 +240,9 @@ const Upload = ({ onImageUpload, uploadedImage }) => {
               style={{ display: "none" }}
             />
 
-            {!uploadedImage ? (
+            <canvas ref={canvasRef} style={{ display: "none" }} />
+
+            {mode === "upload" && !uploadedImage ? (
               <Stack spacing={2.5} alignItems="center" sx={{ py: 3 }}>
                 <Box
                   sx={{
@@ -128,7 +277,9 @@ const Upload = ({ onImageUpload, uploadedImage }) => {
                   Supports JPG, PNG, WEBP · Max 10 MB
                 </Typography>
               </Stack>
-            ) : (
+            ) : null}
+
+            {mode === "upload" && uploadedImage ? (
               <Stack spacing={3} alignItems="center" className="animate-scale-in">
                 <Box
                   component="img"
@@ -153,7 +304,65 @@ const Upload = ({ onImageUpload, uploadedImage }) => {
                   Remove & Try Another
                 </Button>
               </Stack>
-            )}
+            ) : null}
+
+            {mode === "realtime" ? (
+              <Stack spacing={2.5} alignItems="center">
+                {cameraError ? <Alert severity="error" sx={{ width: "100%" }}>{cameraError}</Alert> : null}
+
+                <Box
+                  sx={{
+                    width: "100%",
+                    borderRadius: 2,
+                    overflow: "hidden",
+                    border: "1px solid rgba(0,0,0,0.08)",
+                    bgcolor: "#0f1a12",
+                    minHeight: { xs: 220, sm: 320 },
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    muted
+                    playsInline
+                    style={{ width: "100%", display: isRealtimeActive ? "block" : "none" }}
+                  />
+                  {!isRealtimeActive ? (
+                    <Typography variant="body2" sx={{ color: "#d9e2d5" }}>
+                      Start camera to begin live prediction
+                    </Typography>
+                  ) : null}
+                </Box>
+
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
+                  {!isRealtimeActive ? (
+                    <Button
+                      variant="contained"
+                      startIcon={<VideocamOutlined />}
+                      onClick={startRealtime}
+                    >
+                      Start Real-Time Analysis
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      startIcon={<StopCircleOutlined />}
+                      onClick={stopRealtime}
+                    >
+                      Stop Camera
+                    </Button>
+                  )}
+                </Stack>
+
+                <Typography variant="caption" color="text.secondary">
+                  Camera captures frames every ~2 seconds and updates the prediction in real time.
+                </Typography>
+              </Stack>
+            ) : null}
           </Paper>
 
           {/* Tip cards */}
