@@ -85,6 +85,26 @@ Open http://localhost:5173 in your browser.
 docker-compose up -d
 ```
 
+## 🌐 Frontend + Backend Deployment (Vercel)
+
+If your frontend is deployed at `https://crop-guard-ai-ebon.vercel.app`, set backend CORS to allow it:
+
+```env
+CORS_ORIGINS=https://crop-guard-ai-ebon.vercel.app
+```
+
+If you also want local frontend access during development, keep both:
+
+```env
+CORS_ORIGINS=http://localhost:5173,https://crop-guard-ai-ebon.vercel.app
+```
+
+In Vercel project settings, set your frontend environment variable to your backend URL:
+
+```env
+VITE_API_URL=https://<your-backend-domain>
+```
+
 ## 📡 API Endpoints
 
 | Method | Endpoint | Auth | Description |
