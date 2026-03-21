@@ -116,10 +116,24 @@ const Navbar = () => {
                   <Typography>{link.name}</Typography>
                 </MenuItem>
               ))}
-              {isAuthenticated && (
-                <MenuItem onClick={() => { handleCloseNavMenu(); navigate("/history"); }}>
-                  <Typography>History</Typography>
-                </MenuItem>
+              {isAuthenticated ? (
+                <>
+                  <MenuItem onClick={() => { handleCloseNavMenu(); navigate("/history"); }}>
+                    <Typography>History</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleCloseNavMenu(); handleLogout(); }}>
+                    <Typography>Logout</Typography>
+                  </MenuItem>
+                </>
+              ) : (
+                <>
+                  <MenuItem onClick={() => { handleCloseNavMenu(); navigate("/login"); }}>
+                    <Typography>Sign In</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={() => { handleCloseNavMenu(); navigate("/register"); }}>
+                    <Typography>Get Started</Typography>
+                  </MenuItem>
+                </>
               )}
             </Menu>
           </Box>
