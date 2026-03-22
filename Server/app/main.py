@@ -63,6 +63,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.middleware("http")
+async def add_private_network_access_header(request, call_next):
+    """Allow Chrome PNA preflight for private/local network requests."""
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Private-Network"] = "true"
+    return response
+
 # ── Register routes ───────────────────────────────────────────────────
 from app.routes.auth_routes import router as auth_router
 from app.routes.predict_routes import router as predict_router
