@@ -278,6 +278,7 @@ def _run_real_inference(image: Image.Image) -> dict:
     # Low confidence fallback
     if confidence < CONFIDENCE_THRESHOLD:
         return {
+            "class_key": "",
             "crop_name": "Unknown",
             "disease_name": "Uncertain",
             "confidence": confidence_pct,
@@ -303,6 +304,7 @@ def _run_real_inference(image: Image.Image) -> dict:
         disease = parts[1].replace("_", " ") if len(parts) > 1 else class_name.replace("_", " ")
 
         return {
+            "class_key": class_key if class_key in DISEASE_DATABASE else "",
             "crop_name": crop,
             "disease_name": disease,
             "confidence": confidence_pct,
@@ -317,16 +319,17 @@ def _run_real_inference(image: Image.Image) -> dict:
             "status": "Healthy" if "healthy" in disease.lower() else "Diseased",
         }
 
-    return _build_result(disease_info, confidence_pct)
+    return _build_result(disease_info, confidence_pct, class_key)
 
 
 
 
 
-def _build_result(disease_info: dict, confidence: int) -> dict:
+def _build_result(disease_info: dict, confidence: int, class_key: str = "") -> dict:
     """Build a standardised prediction result dict."""
     is_healthy = disease_info.get("disease_name") == "Healthy"
     return {
+        "class_key": class_key,
         "crop_name": disease_info.get("crop", "Unknown"),
         "disease_name": disease_info.get("disease_name", "Unknown"),
         "confidence": confidence,

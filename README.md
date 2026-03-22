@@ -85,6 +85,53 @@ Open http://localhost:5173 in your browser.
 docker-compose up -d
 ```
 
+## 🌐 Frontend + Backend Deployment (Vercel)
+
+If your frontend is deployed at `https://crop-guard-ai-ebon.vercel.app`, set backend CORS to allow it:
+
+```env
+CORS_ORIGINS=https://crop-guard-ai-ebon.vercel.app
+```
+
+If you also want local frontend access during development, keep both:
+
+```env
+CORS_ORIGINS=http://localhost:5173,https://crop-guard-ai-ebon.vercel.app
+```
+
+In Vercel project settings, set your frontend environment variable to your backend URL:
+
+```env
+VITE_API_URL=https://<your-backend-domain>
+```
+
+### Parallel Deployments + Version Sync
+
+This repository includes a GitHub Actions workflow that deploys frontend and backend in parallel:
+
+- Workflow: `.github/workflows/vercel-parallel-deploy.yml`
+- Trigger: push to `main` or manual run
+- Benefit: frontend/backend deploy at the same time and use the same commit SHA for release alignment
+
+Required GitHub repository secrets:
+
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_FRONTEND_PROJECT_ID`
+- `VERCEL_BACKEND_PROJECT_ID`
+
+Release sync behavior:
+
+- Frontend injects `VITE_APP_RELEASE=<git sha>` at build time
+- Backend injects `APP_RELEASE=<git sha>` at deploy time
+- Frontend sends `X-Client-Release` header and checks `/api/status` release value
+- Mismatch is logged as `release.mismatch` in runtime logs
+
+### Build Speed Guidance
+
+- For faster builds, set Vercel Build Machine to a larger size in Project Settings → Build and Deployment.
+- Build machine size is a Vercel account/project setting and cannot be forced from repository code.
+
 ## 📡 API Endpoints
 
 | Method | Endpoint | Auth | Description |

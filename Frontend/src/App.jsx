@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -8,7 +9,7 @@ import Zoom from "@mui/material/Zoom";
 import KeyboardArrowUpOutlined from "@mui/icons-material/KeyboardArrowUpOutlined";
 import { Analytics } from "@vercel/analytics/react";
 import { AuthProvider } from "./context/AuthContext";
-import { api } from "./api/client";
+import { api, getClientRelease } from "./api/client";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Upload from "./components/Upload";
@@ -20,6 +21,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import History from "./pages/History";
 import DiseaseDetail from "./pages/DiseaseDetail";
+import { runtimeLogger } from "./utils/runtimeLogger";
 
 /* ── Theme — warm, natural, earthy ──────────────────────────────────── */
 const theme = createTheme({
@@ -90,7 +92,10 @@ function HomePage() {
     const { live } = options;
 
     if (live) {
-      if (liveRequestInFlight.current) return;
+      if (liveRequestInFlight.current) {
+        runtimeLogger.info("predict.live.skipped_inflight");
+        return;
+      }
       liveRequestInFlight.current = true;
       setIsRealtimeAnalyzing(true);
     } else {
@@ -98,9 +103,19 @@ function HomePage() {
       setDetectionResult(null);
     }
 
+    runtimeLogger.info("predict.flow.started", {
+      mode: live ? "realtime" : "upload",
+    });
+
     try {
       const res = await api.predict(file);
       setDetectionResult(res.data);
+
+      runtimeLogger.info("predict.flow.completed", {
+        mode: live ? "realtime" : "upload",
+        disease: res?.data?.disease_name || null,
+        confidence: res?.data?.confidence || null,
+      });
 
       if (!live) {
         setTimeout(() => {
@@ -108,7 +123,11 @@ function HomePage() {
         }, 100);
       }
     } catch (error) {
-      console.error("Detection failed:", error);
+      runtimeLogger.error("predict.flow.failed", {
+        mode: live ? "realtime" : "upload",
+        status: error?.response?.status || null,
+        detail: error?.response?.data?.detail || error?.message,
+      });
       if (!live) {
         alert(`Detection failed: ${error.response?.data?.detail || error.message}`);
       }
@@ -125,9 +144,15 @@ function HomePage() {
   const handleImageUpload = (imageData, file) => {
     setUploadedImage(imageData);
     setDetectionResult(null);
-    setIsRealtimeActive(false);
-    setIsRealtimeAnalyzing(false);
-    if (file) detectDisease(file);
+
+    // Only disable realtime when processing a manual file upload.
+    // Realtime camera startup clears preview by calling onImageUpload(null)
+    // and should not flip camera state off.
+    if (file) {
+      setIsRealtimeActive(false);
+      setIsRealtimeAnalyzing(false);
+      detectDisease(file);
+    }
   };
 
   const handleRealtimeFrame = (frameFile) => {
@@ -191,6 +216,35 @@ function App() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const checkReleaseAlignment = async () => {
+      try {
+        const clientRelease = getClientRelease();
+        const statusRes = await api.getStatus();
+        const serverRelease = statusRes?.data?.release || "unknown";
+
+        if (clientRelease !== "local-dev" && serverRelease !== "unknown" && clientRelease !== serverRelease) {
+          runtimeLogger.warn("release.mismatch", {
+            clientRelease,
+            serverRelease,
+          });
+          return;
+        }
+
+        runtimeLogger.info("release.aligned", {
+          clientRelease,
+          serverRelease,
+        });
+      } catch (error) {
+        runtimeLogger.warn("release.check.failed", {
+          detail: error?.response?.data?.detail || error?.message,
+        });
+      }
+    };
+
+    checkReleaseAlignment();
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -229,6 +283,7 @@ function App() {
         </BrowserRouter>
       </AuthProvider>
       <Analytics />
+      <SpeedInsights />
     </ThemeProvider>
   );
 }

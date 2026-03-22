@@ -71,6 +71,7 @@ async def predict_disease(
         db = get_db()
         prediction_doc = {
             "user_id": current_user["_id"],
+            "class_key": result.get("class_key", ""),
             "crop_name": result["crop_name"],
             "disease_name": result["disease_name"],
             "confidence": result["confidence"],

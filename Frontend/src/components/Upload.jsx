@@ -16,6 +16,7 @@ import PhotoCameraOutlined from "@mui/icons-material/PhotoCameraOutlined";
 import DeleteOutlineOutlined from "@mui/icons-material/DeleteOutlineOutlined";
 import VideocamOutlined from "@mui/icons-material/VideocamOutlined";
 import StopCircleOutlined from "@mui/icons-material/StopCircleOutlined";
+import { runtimeLogger } from "../utils/runtimeLogger";
 
 const Upload = ({
   onImageUpload,
@@ -27,6 +28,8 @@ const Upload = ({
   const [isDragging, setIsDragging] = useState(false);
   const [mode, setMode] = useState("upload");
   const [cameraError, setCameraError] = useState("");
+  const [isStartingCamera, setIsStartingCamera] = useState(false);
+  const [isCameraRunning, setIsCameraRunning] = useState(false);
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
   const streamRef = useRef(null);
@@ -34,6 +37,11 @@ const Upload = ({
   const canvasRef = useRef(null);
 
   const stopRealtime = useCallback(() => {
+    runtimeLogger.info("camera.stop", {
+      hadInterval: Boolean(captureIntervalRef.current),
+      hadStream: Boolean(streamRef.current),
+    });
+
     if (captureIntervalRef.current) {
       clearInterval(captureIntervalRef.current);
       captureIntervalRef.current = null;
@@ -48,6 +56,8 @@ const Upload = ({
       videoRef.current.srcObject = null;
     }
 
+    setIsStartingCamera(false);
+    setIsCameraRunning(false);
     onRealtimeStateChange(false);
   }, [onRealtimeStateChange]);
 
@@ -129,32 +139,101 @@ const Upload = ({
 
   const startRealtime = async () => {
     if (!navigator.mediaDevices?.getUserMedia) {
+      runtimeLogger.error("camera.unsupported_browser");
       setCameraError("This browser does not support camera access.");
       return;
     }
 
     try {
+      runtimeLogger.info("camera.start.requested");
+      setIsStartingCamera(true);
+      stopRealtime();
       setCameraError("");
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: "environment" } },
-        audio: false,
-      });
+
+      const cameraConstraints = [
+        {
+          video: {
+            facingMode: { ideal: "environment" },
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+          audio: false,
+        },
+        {
+          video: { facingMode: "user" },
+          audio: false,
+        },
+        {
+          video: true,
+          audio: false,
+        },
+      ];
+
+      let stream;
+      let lastError;
+      for (const constraints of cameraConstraints) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia(constraints);
+          runtimeLogger.info("camera.start.constraint_selected", { constraints });
+          break;
+        } catch (error) {
+          lastError = error;
+          runtimeLogger.warn("camera.start.constraint_failed", {
+            errorName: error?.name,
+            message: error?.message,
+          });
+          if (error?.name === "NotAllowedError" || error?.name === "SecurityError") {
+            throw error;
+          }
+        }
+      }
+
+      if (!stream) {
+        throw lastError || new Error("Unable to access camera");
+      }
 
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        await videoRef.current.play();
+        videoRef.current.setAttribute("playsinline", "true");
+        await new Promise((resolve) => {
+          if (videoRef.current.readyState >= 1) {
+            resolve();
+            return;
+          }
+          const onLoadedMetadata = () => {
+            videoRef.current?.removeEventListener("loadedmetadata", onLoadedMetadata);
+            resolve();
+          };
+          videoRef.current.addEventListener("loadedmetadata", onLoadedMetadata, { once: true });
+        });
+        try {
+          await videoRef.current.play();
+        } catch (playError) {
+          // Some mobile browsers can reject play() transiently while stream is still valid.
+          runtimeLogger.warn("camera.start.play_rejected", {
+            message: playError?.message,
+          });
+        }
       }
 
       onImageUpload(null);
+      setIsCameraRunning(true);
       onRealtimeStateChange(true);
+
+      runtimeLogger.info("camera.start.success");
 
       captureFrameAndPredict();
       captureIntervalRef.current = setInterval(captureFrameAndPredict, 1800);
     } catch (error) {
-      console.error("Unable to start camera:", error);
+      runtimeLogger.error("camera.start.failed", {
+        errorName: error?.name,
+        message: error?.message,
+      });
       setCameraError(getCameraErrorMessage(error));
       stopRealtime();
+    } finally {
+      setIsStartingCamera(false);
     }
   };
 
@@ -171,6 +250,8 @@ const Upload = ({
     { icon: LocalFloristOutlined, title: "Single Leaf", desc: "One leaf at a time for accuracy", color: "#6a9b5e" },
     { icon: PhotoCameraOutlined, title: "Close-Up", desc: "Get close to capture details", color: "#8db580" },
   ];
+
+  const showLiveFeed = isCameraRunning || isRealtimeActive;
 
   return (
     <Box id="upload" sx={{ py: { xs: 8, sm: 12 }, bgcolor: "#fff" }}>
@@ -328,23 +409,24 @@ const Upload = ({
                     autoPlay
                     muted
                     playsInline
-                    style={{ width: "100%", display: isRealtimeActive ? "block" : "none" }}
+                    style={{ width: "100%", display: showLiveFeed ? "block" : "none" }}
                   />
-                  {!isRealtimeActive ? (
+                  {!showLiveFeed ? (
                     <Typography variant="body2" sx={{ color: "#d9e2d5" }}>
-                      Start camera to begin live prediction
+                      {isStartingCamera ? "Starting camera..." : "Start camera to begin live prediction"}
                     </Typography>
                   ) : null}
                 </Box>
 
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
-                  {!isRealtimeActive ? (
+                  {!showLiveFeed ? (
                     <Button
                       variant="contained"
                       startIcon={<VideocamOutlined />}
                       onClick={startRealtime}
+                      disabled={isStartingCamera}
                     >
-                      Start Real-Time Analysis
+                      {isStartingCamera ? "Starting..." : "Start Real-Time Analysis"}
                     </Button>
                   ) : (
                     <Button

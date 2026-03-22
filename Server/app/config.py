@@ -28,5 +28,14 @@ MAX_FILE_SIZE = int(os.getenv("MAX_FILE_SIZE", str(10 * 1024 * 1024)))  # 10 MB
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
 
 # ── Server ────────────────────────────────────────────────────────────
-CORS_ORIGINS = os.getenv("CORS_ORIGINS", "*").split(",")
+_default_cors_origins = (
+	"http://localhost:5173,"
+	"http://localhost:3000,"
+	"https://crop-guard-ai-ebon.vercel.app"
+)
+CORS_ORIGINS = [
+	origin.strip()
+	for origin in os.getenv("CORS_ORIGINS", _default_cors_origins).split(",")
+	if origin.strip()
+]
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
