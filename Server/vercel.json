@@ -14,7 +14,7 @@
   "functions": {
     "Server/api/index.py": {
       "runtime": "python3.11",
-      "memory": 3008,
+      "memory": 2048,
       "maxDuration": 30
     }
   }
