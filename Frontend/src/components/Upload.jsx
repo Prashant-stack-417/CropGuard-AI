@@ -27,6 +27,8 @@ const Upload = ({
   const [isDragging, setIsDragging] = useState(false);
   const [mode, setMode] = useState("upload");
   const [cameraError, setCameraError] = useState("");
+  const [isStartingCamera, setIsStartingCamera] = useState(false);
+  const [isCameraRunning, setIsCameraRunning] = useState(false);
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
   const streamRef = useRef(null);
@@ -48,6 +50,8 @@ const Upload = ({
       videoRef.current.srcObject = null;
     }
 
+    setIsStartingCamera(false);
+    setIsCameraRunning(false);
     onRealtimeStateChange(false);
   }, [onRealtimeStateChange]);
 
@@ -134,6 +138,7 @@ const Upload = ({
     }
 
     try {
+      setIsStartingCamera(true);
       stopRealtime();
       setCameraError("");
 
@@ -189,10 +194,16 @@ const Upload = ({
           };
           videoRef.current.addEventListener("loadedmetadata", onLoadedMetadata, { once: true });
         });
-        await videoRef.current.play();
+        try {
+          await videoRef.current.play();
+        } catch (playError) {
+          // Some mobile browsers can reject play() transiently while stream is still valid.
+          console.warn("Video playback did not start immediately:", playError);
+        }
       }
 
       onImageUpload(null);
+      setIsCameraRunning(true);
       onRealtimeStateChange(true);
 
       captureFrameAndPredict();
@@ -201,6 +212,8 @@ const Upload = ({
       console.error("Unable to start camera:", error);
       setCameraError(getCameraErrorMessage(error));
       stopRealtime();
+    } finally {
+      setIsStartingCamera(false);
     }
   };
 
@@ -217,6 +230,8 @@ const Upload = ({
     { icon: LocalFloristOutlined, title: "Single Leaf", desc: "One leaf at a time for accuracy", color: "#6a9b5e" },
     { icon: PhotoCameraOutlined, title: "Close-Up", desc: "Get close to capture details", color: "#8db580" },
   ];
+
+  const showLiveFeed = isCameraRunning || isRealtimeActive;
 
   return (
     <Box id="upload" sx={{ py: { xs: 8, sm: 12 }, bgcolor: "#fff" }}>
@@ -374,23 +389,24 @@ const Upload = ({
                     autoPlay
                     muted
                     playsInline
-                    style={{ width: "100%", display: isRealtimeActive ? "block" : "none" }}
+                    style={{ width: "100%", display: showLiveFeed ? "block" : "none" }}
                   />
-                  {!isRealtimeActive ? (
+                  {!showLiveFeed ? (
                     <Typography variant="body2" sx={{ color: "#d9e2d5" }}>
-                      Start camera to begin live prediction
+                      {isStartingCamera ? "Starting camera..." : "Start camera to begin live prediction"}
                     </Typography>
                   ) : null}
                 </Box>
 
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
-                  {!isRealtimeActive ? (
+                  {!showLiveFeed ? (
                     <Button
                       variant="contained"
                       startIcon={<VideocamOutlined />}
                       onClick={startRealtime}
+                      disabled={isStartingCamera}
                     >
-                      Start Real-Time Analysis
+                      {isStartingCamera ? "Starting..." : "Start Real-Time Analysis"}
                     </Button>
                   ) : (
                     <Button
