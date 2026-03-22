@@ -12,6 +12,7 @@ import Link from "@mui/material/Link";
 import CircularProgress from "@mui/material/CircularProgress";
 import Spa from "@mui/icons-material/Spa";
 import { useAuth } from "../context/AuthContext";
+import { getApiErrorMessage } from "../api/client";
 
 const Register = () => {
     const { register } = useAuth();
@@ -41,7 +42,7 @@ const Register = () => {
             await register(name, email, password);
             navigate("/");
         } catch (err) {
-            setError(err.response?.data?.detail || "Registration failed. Please try again.");
+            setError(getApiErrorMessage(err, "Registration failed. Please try again."));
         } finally {
             setLoading(false);
         }

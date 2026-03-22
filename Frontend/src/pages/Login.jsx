@@ -12,6 +12,7 @@ import Link from "@mui/material/Link";
 import CircularProgress from "@mui/material/CircularProgress";
 import Spa from "@mui/icons-material/Spa";
 import { useAuth } from "../context/AuthContext";
+import { getApiErrorMessage } from "../api/client";
 
 const Login = () => {
     const { login } = useAuth();
@@ -29,7 +30,7 @@ const Login = () => {
             await login(email, password);
             navigate("/");
         } catch (err) {
-            setError(err.response?.data?.detail || "Login failed. Please check your credentials.");
+            setError(getApiErrorMessage(err, "Login failed. Please check your credentials."));
         } finally {
             setLoading(false);
         }

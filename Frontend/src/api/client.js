@@ -266,6 +266,26 @@ export const api = {
     },
 };
 
+export const getApiErrorMessage = (error, fallbackMessage) => {
+    const apiDetail = error?.response?.data?.detail || error?.response?.data?.message;
+    if (apiDetail) {
+        return apiDetail;
+    }
+
+    if (error?.code === "ERR_NETWORK" || !error?.response) {
+        return "Backend service is unavailable. Start the backend server or deploy it, then set VITE_API_URL to that backend URL.";
+    }
+
+    if (typeof error?.message === "string" && error.message.trim()) {
+        if (error.message.includes("Missing VITE_API_URL")) {
+            return "Backend is not configured for this frontend deployment. Set VITE_API_URL to your backend URL and redeploy.";
+        }
+        return error.message;
+    }
+
+    return fallbackMessage;
+};
+
 export const getClientRelease = () => CLIENT_RELEASE;
 
 export default client;
