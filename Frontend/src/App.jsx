@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import Fab from "@mui/material/Fab";
 import Zoom from "@mui/material/Zoom";
 import KeyboardArrowUpOutlined from "@mui/icons-material/KeyboardArrowUpOutlined";
+import { Analytics } from "@vercel/analytics/react";
 import { AuthProvider } from "./context/AuthContext";
 import { api, getClientRelease } from "./api/client";
 import Navbar from "./components/Navbar";
@@ -281,6 +282,7 @@ function App() {
           </Box>
         </BrowserRouter>
       </AuthProvider>
+      <Analytics />
       <SpeedInsights />
     </ThemeProvider>
   );
