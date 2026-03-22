@@ -105,12 +105,6 @@ In Vercel project settings, set your frontend environment variable to your backe
 VITE_API_URL=https://<your-backend-domain>
 ```
 
-Optional runtime diagnostics in production:
-
-```env
-VITE_RUNTIME_LOGS=true
-```
-
 ## 📡 API Endpoints
 
 | Method | Endpoint | Auth | Description |

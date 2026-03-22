@@ -1,7 +1,9 @@
 const envFlag = (import.meta.env.VITE_RUNTIME_LOGS || "").toLowerCase();
 
+// Logging is opt-in only — never force-enabled in production.
+// Users must explicitly set VITE_RUNTIME_LOGS=true (or 1/yes) to enable.
 const isRuntimeLoggingEnabled =
-  import.meta.env.PROD || envFlag === "1" || envFlag === "true" || envFlag === "yes";
+  envFlag === "1" || envFlag === "true" || envFlag === "yes";
 
 const buildMeta = () => ({
   app: "cropguard-frontend",
