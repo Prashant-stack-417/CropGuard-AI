@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -280,6 +281,7 @@ function App() {
           </Box>
         </BrowserRouter>
       </AuthProvider>
+      <SpeedInsights />
     </ThemeProvider>
   );
 }
