@@ -110,4 +110,8 @@ export const getApiErrorMessage = (error, fallbackMessage) => {
     return fallbackMessage;
 };
 
+export const getClientRelease = () => {
+    return import.meta.env.VITE_APP_RELEASE || "local-dev";
+};
+
 export default client;
