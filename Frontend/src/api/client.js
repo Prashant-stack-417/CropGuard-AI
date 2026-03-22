@@ -10,6 +10,20 @@ import { runtimeLogger } from "../utils/runtimeLogger";
 const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:8000" : "");
 const CLIENT_RELEASE = import.meta.env.VITE_APP_RELEASE || "local-dev";
 
+const assertApiBaseUrlConfigured = (requestPath) => {
+    if (API_BASE_URL || import.meta.env.DEV) return;
+
+    const message =
+        "Missing VITE_API_URL for production build. Configure your backend URL in Vercel Project Settings so auth and API calls do not go to the frontend domain.";
+
+    runtimeLogger.error("api.base_url.missing", {
+        requestPath,
+        clientRelease: CLIENT_RELEASE,
+    });
+
+    throw new Error(message);
+};
+
 const isLoopbackHost = (hostname) => {
     const host = (hostname || "").toLowerCase();
     return host === "localhost" || host === "127.0.0.1" || host === "::1";
@@ -179,11 +193,19 @@ client.interceptors.response.use(
 // ── API functions ────────────────────────────────────────────────────
 export const api = {
     // Auth
-    register: (data) => client.post("/api/register", data),
-    login: (data) => client.post("/api/login", data),
+    register: (data) => {
+        assertApiBaseUrlConfigured("/api/register");
+        return client.post("/api/register", data);
+    },
+    login: (data) => {
+        assertApiBaseUrlConfigured("/api/login");
+        return client.post("/api/login", data);
+    },
 
     // Prediction
     predict: async (file) => {
+        assertApiBaseUrlConfigured("/api/predict");
+
         if (shouldUsePnaSafeFetch("/api/predict")) {
             return predictWithPnaSafeFetch(file);
         }
@@ -223,16 +245,25 @@ export const api = {
 
     // History
     getHistory: (page = 1, limit = 20) =>
-        client.get(`/api/history?page=${page}&limit=${limit}`),
+        (assertApiBaseUrlConfigured("/api/history"), client.get(`/api/history?page=${page}&limit=${limit}`)),
 
     // Diseases
     getDiseases: (crop) =>
-        client.get(`/api/diseases${crop ? `?crop=${crop}` : ""}`),
-    getDiseaseDetail: (classKey) => client.get(`/api/diseases/${classKey}`),
-    getCrops: () => client.get("/api/crops"),
+        (assertApiBaseUrlConfigured("/api/diseases"), client.get(`/api/diseases${crop ? `?crop=${crop}` : ""}`)),
+    getDiseaseDetail: (classKey) => {
+        assertApiBaseUrlConfigured(`/api/diseases/${classKey}`);
+        return client.get(`/api/diseases/${classKey}`);
+    },
+    getCrops: () => {
+        assertApiBaseUrlConfigured("/api/crops");
+        return client.get("/api/crops");
+    },
 
     // Status
-    getStatus: () => client.get("/api/status"),
+    getStatus: () => {
+        assertApiBaseUrlConfigured("/api/status");
+        return client.get("/api/status");
+    },
 };
 
 export const getClientRelease = () => CLIENT_RELEASE;
