@@ -124,9 +124,15 @@ function HomePage() {
   const handleImageUpload = (imageData, file) => {
     setUploadedImage(imageData);
     setDetectionResult(null);
-    setIsRealtimeActive(false);
-    setIsRealtimeAnalyzing(false);
-    if (file) detectDisease(file);
+
+    // Only disable realtime when processing a manual file upload.
+    // Realtime camera startup clears preview by calling onImageUpload(null)
+    // and should not flip camera state off.
+    if (file) {
+      setIsRealtimeActive(false);
+      setIsRealtimeAnalyzing(false);
+      detectDisease(file);
+    }
   };
 
   const handleRealtimeFrame = (frameFile) => {
