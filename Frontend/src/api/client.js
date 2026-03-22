@@ -5,6 +5,7 @@
  */
 
 import axios from "axios";
+import { runtimeLogger } from "../utils/runtimeLogger";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:8000" : "");
 
@@ -57,6 +58,12 @@ const predictWithPnaSafeFetch = async (file) => {
     const addressSpace = getTargetAddressSpace(requestUrl);
     const token = localStorage.getItem("cropguard_token");
 
+    runtimeLogger.info("predict.request.start", {
+        transport: "fetch",
+        requestUrl,
+        addressSpace,
+    });
+
     const headers = {};
     if (token) {
         headers.Authorization = `Bearer ${token}`;
@@ -78,6 +85,12 @@ const predictWithPnaSafeFetch = async (file) => {
     try {
         response = await fetch(requestUrl, requestOptions);
     } catch (error) {
+        runtimeLogger.error("predict.request.network_error", {
+            transport: "fetch",
+            requestUrl,
+            message: error?.message,
+        });
+
         const pnaHint =
             "Request blocked by browser local network policy. Use an HTTPS backend URL in VITE_API_URL for deployed frontend, or grant local network permission for this site.";
         throw new Error(`${pnaHint} (${error?.message || "network request failed"})`);
@@ -91,6 +104,13 @@ const predictWithPnaSafeFetch = async (file) => {
     }
 
     if (!response.ok) {
+        runtimeLogger.warn("predict.request.failed", {
+            transport: "fetch",
+            requestUrl,
+            status: response.status,
+            detail: data?.detail || data?.message || null,
+        });
+
         if (response.status === 401) {
             localStorage.removeItem("cropguard_token");
             localStorage.removeItem("cropguard_user");
@@ -104,6 +124,12 @@ const predictWithPnaSafeFetch = async (file) => {
         };
         throw error;
     }
+
+    runtimeLogger.info("predict.request.success", {
+        transport: "fetch",
+        requestUrl,
+        status: response.status,
+    });
 
     return {
         data,
@@ -151,17 +177,42 @@ export const api = {
     login: (data) => client.post("/api/login", data),
 
     // Prediction
-    predict: (file) => {
+    predict: async (file) => {
         if (shouldUsePnaSafeFetch("/api/predict")) {
             return predictWithPnaSafeFetch(file);
         }
 
+        const requestPath = "/api/predict";
+        runtimeLogger.info("predict.request.start", {
+            transport: "axios",
+            requestPath,
+        });
+
         const formData = new FormData();
         formData.append("file", file);
-        return client.post("/api/predict", formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-            timeout: 60000,
-        });
+
+        try {
+            const response = await client.post(requestPath, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+                timeout: 60000,
+            });
+
+            runtimeLogger.info("predict.request.success", {
+                transport: "axios",
+                requestPath,
+                status: response.status,
+            });
+
+            return response;
+        } catch (error) {
+            runtimeLogger.error("predict.request.failed", {
+                transport: "axios",
+                requestPath,
+                status: error?.response?.status || null,
+                detail: error?.response?.data?.detail || error?.message,
+            });
+            throw error;
+        }
     },
 
     // History

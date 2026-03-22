@@ -19,6 +19,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import History from "./pages/History";
 import DiseaseDetail from "./pages/DiseaseDetail";
+import { runtimeLogger } from "./utils/runtimeLogger";
 
 /* ── Theme — warm, natural, earthy ──────────────────────────────────── */
 const theme = createTheme({
@@ -89,7 +90,10 @@ function HomePage() {
     const { live } = options;
 
     if (live) {
-      if (liveRequestInFlight.current) return;
+      if (liveRequestInFlight.current) {
+        runtimeLogger.info("predict.live.skipped_inflight");
+        return;
+      }
       liveRequestInFlight.current = true;
       setIsRealtimeAnalyzing(true);
     } else {
@@ -97,9 +101,19 @@ function HomePage() {
       setDetectionResult(null);
     }
 
+    runtimeLogger.info("predict.flow.started", {
+      mode: live ? "realtime" : "upload",
+    });
+
     try {
       const res = await api.predict(file);
       setDetectionResult(res.data);
+
+      runtimeLogger.info("predict.flow.completed", {
+        mode: live ? "realtime" : "upload",
+        disease: res?.data?.disease_name || null,
+        confidence: res?.data?.confidence || null,
+      });
 
       if (!live) {
         setTimeout(() => {
@@ -107,7 +121,11 @@ function HomePage() {
         }, 100);
       }
     } catch (error) {
-      console.error("Detection failed:", error);
+      runtimeLogger.error("predict.flow.failed", {
+        mode: live ? "realtime" : "upload",
+        status: error?.response?.status || null,
+        detail: error?.response?.data?.detail || error?.message,
+      });
       if (!live) {
         alert(`Detection failed: ${error.response?.data?.detail || error.message}`);
       }
