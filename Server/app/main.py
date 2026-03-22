@@ -3,6 +3,7 @@ CropGuard AI — FastAPI Application Entry Point
 """
 
 import logging
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -19,6 +20,7 @@ logging.basicConfig(
     datefmt="%H:%M:%S",
 )
 logger = logging.getLogger("cropguard")
+APP_RELEASE = os.getenv("APP_RELEASE") or os.getenv("VERCEL_GIT_COMMIT_SHA") or "unknown"
 
 
 # ── Lifespan ──────────────────────────────────────────────────────────
@@ -90,6 +92,7 @@ async def health_check():
         "status": "healthy",
         "service": "CropGuard AI",
         "version": "1.0.0",
+        "release": APP_RELEASE,
         "model_loaded": is_model_loaded(),
     }
 
@@ -98,6 +101,7 @@ async def health_check():
 async def api_status():
     return {
         "api": "running",
+        "release": APP_RELEASE,
         "model": "loaded" if is_model_loaded() else "not_loaded",
         "endpoints": [
             "POST /api/register",

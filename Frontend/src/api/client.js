@@ -8,6 +8,7 @@ import axios from "axios";
 import { runtimeLogger } from "../utils/runtimeLogger";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://localhost:8000" : "");
+const CLIENT_RELEASE = import.meta.env.VITE_APP_RELEASE || "local-dev";
 
 const isLoopbackHost = (hostname) => {
     const host = (hostname || "").toLowerCase();
@@ -62,9 +63,12 @@ const predictWithPnaSafeFetch = async (file) => {
         transport: "fetch",
         requestUrl,
         addressSpace,
+        clientRelease: CLIENT_RELEASE,
     });
 
-    const headers = {};
+    const headers = {
+        "X-Client-Release": CLIENT_RELEASE,
+    };
     if (token) {
         headers.Authorization = `Bearer ${token}`;
     }
@@ -150,7 +154,9 @@ const client = axios.create({
 
 // ── Request interceptor: attach JWT ──────────────────────────────────
 client.interceptors.request.use((config) => {
+    config.headers = config.headers || {};
     const token = localStorage.getItem("cropguard_token");
+    config.headers["X-Client-Release"] = CLIENT_RELEASE;
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -228,5 +234,7 @@ export const api = {
     // Status
     getStatus: () => client.get("/api/status"),
 };
+
+export const getClientRelease = () => CLIENT_RELEASE;
 
 export default client;

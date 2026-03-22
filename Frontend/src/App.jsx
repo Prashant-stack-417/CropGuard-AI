@@ -7,7 +7,7 @@ import Fab from "@mui/material/Fab";
 import Zoom from "@mui/material/Zoom";
 import KeyboardArrowUpOutlined from "@mui/icons-material/KeyboardArrowUpOutlined";
 import { AuthProvider } from "./context/AuthContext";
-import { api } from "./api/client";
+import { api, getClientRelease } from "./api/client";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Upload from "./components/Upload";
@@ -212,6 +212,35 @@ function App() {
     const handleScroll = () => setShowScrollTop(window.scrollY > 400);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const checkReleaseAlignment = async () => {
+      try {
+        const clientRelease = getClientRelease();
+        const statusRes = await api.getStatus();
+        const serverRelease = statusRes?.data?.release || "unknown";
+
+        if (clientRelease !== "local-dev" && serverRelease !== "unknown" && clientRelease !== serverRelease) {
+          runtimeLogger.warn("release.mismatch", {
+            clientRelease,
+            serverRelease,
+          });
+          return;
+        }
+
+        runtimeLogger.info("release.aligned", {
+          clientRelease,
+          serverRelease,
+        });
+      } catch (error) {
+        runtimeLogger.warn("release.check.failed", {
+          detail: error?.response?.data?.detail || error?.message,
+        });
+      }
+    };
+
+    checkReleaseAlignment();
   }, []);
 
   return (
