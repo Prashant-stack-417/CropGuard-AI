@@ -1,12 +1,14 @@
 {
-  "buildCommand": "pip install -r Server/requirements.txt",
-  "outputDirectory": "Server",
-  "installCommand": "pip install -r Server/requirements.txt",
   "functions": {
-    "Server/api/index.py": {
-      "runtime": "python3.11",
+    "api/index.py": {
       "memory": 2048,
       "maxDuration": 30
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/index.py"
+    }
+  ]
 }
