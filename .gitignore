@@ -78,3 +78,5 @@ instance/
 .ipynb_checkpoints/
 
 *.md
+.vercel
+.env*.local
