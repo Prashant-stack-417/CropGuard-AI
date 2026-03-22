@@ -134,15 +134,61 @@ const Upload = ({
     }
 
     try {
+      stopRealtime();
       setCameraError("");
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: "environment" } },
-        audio: false,
-      });
+
+      const cameraConstraints = [
+        {
+          video: {
+            facingMode: { ideal: "environment" },
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+          audio: false,
+        },
+        {
+          video: { facingMode: "user" },
+          audio: false,
+        },
+        {
+          video: true,
+          audio: false,
+        },
+      ];
+
+      let stream;
+      let lastError;
+      for (const constraints of cameraConstraints) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia(constraints);
+          break;
+        } catch (error) {
+          lastError = error;
+          if (error?.name === "NotAllowedError" || error?.name === "SecurityError") {
+            throw error;
+          }
+        }
+      }
+
+      if (!stream) {
+        throw lastError || new Error("Unable to access camera");
+      }
 
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        videoRef.current.setAttribute("playsinline", "true");
+        await new Promise((resolve) => {
+          if (videoRef.current.readyState >= 1) {
+            resolve();
+            return;
+          }
+          const onLoadedMetadata = () => {
+            videoRef.current?.removeEventListener("loadedmetadata", onLoadedMetadata);
+            resolve();
+          };
+          videoRef.current.addEventListener("loadedmetadata", onLoadedMetadata, { once: true });
+        });
         await videoRef.current.play();
       }
 
