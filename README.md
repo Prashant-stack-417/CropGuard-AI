@@ -102,7 +102,7 @@ CORS_ORIGINS=http://localhost:5173,https://crop-guard-ai-ebon.vercel.app
 In Vercel project settings, set your frontend environment variable to your backend URL:
 
 ```env
-VITE_API_URL=https://cropguard-backend.vercel.app
+VITE_API_URL=https://<your-backend-domain>
 ```
 
 ### Parallel Deployments + Version Sync
