@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, lazy, Suspense } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -143,7 +143,7 @@ function HomePage() {
     }
   };
 
-  const handleImageUpload = (imageData, file) => {
+  const handleImageUpload = useCallback((imageData, file) => {
     setUploadedImage(imageData);
     setDetectionResult(null);
 
@@ -155,19 +155,19 @@ function HomePage() {
       setIsRealtimeAnalyzing(false);
       detectDisease(file);
     }
-  };
+  }, []);
 
-  const handleRealtimeFrame = (frameFile) => {
+  const handleRealtimeFrame = useCallback((frameFile) => {
     detectDisease(frameFile, { live: true });
-  };
+  }, []);
 
-  const handleRealtimeStateChange = (isActive) => {
+  const handleRealtimeStateChange = useCallback((isActive) => {
     setIsRealtimeActive(isActive);
     if (!isActive) {
       setIsRealtimeAnalyzing(false);
       liveRequestInFlight.current = false;
     }
-  };
+  }, []);
 
   const handleUploadClick = () => {
     document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });

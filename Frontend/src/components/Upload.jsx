@@ -61,7 +61,9 @@ const Upload = ({
     onRealtimeStateChange(false);
   }, [onRealtimeStateChange]);
 
-  useEffect(() => () => stopRealtime(), [stopRealtime]);
+  useEffect(() => {
+    return () => stopRealtime();
+  }, [stopRealtime]);
 
   const handleDragOver = (e) => { e.preventDefault(); setIsDragging(true); };
   const handleDragLeave = (e) => { e.preventDefault(); setIsDragging(false); };
