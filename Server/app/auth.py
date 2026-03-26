@@ -3,16 +3,20 @@ JWT authentication and password hashing.
 """
 
 import hashlib
+import logging
 import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from bson.errors import InvalidId
 from jose import JWTError, jwt
 
 from app.config import JWT_SECRET, JWT_ALGORITHM, JWT_EXPIRE_MINUTES
 from app.database import get_db
+
+logger = logging.getLogger("cropguard.auth")
 
 
 # ── Password hashing (hashlib — Python 3.14 compatible) ──────────────
@@ -63,17 +67,28 @@ async def get_current_user(
     if credentials is None:
         return None
 
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except HTTPException:
+        logger.info("auth.optional.invalid_token")
+        return None
+
     user_id = payload.get("sub")
     if not user_id:
-        raise HTTPException(status_code=401, detail="Invalid token payload")
+        return None
 
     db = get_db()
     from bson import ObjectId
 
-    user = await db.users.find_one({"_id": ObjectId(user_id)})
+    try:
+        object_id = ObjectId(user_id)
+    except (InvalidId, TypeError):
+        logger.info("auth.optional.invalid_user_id")
+        return None
+
+    user = await db.users.find_one({"_id": object_id})
     if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+        return None
 
     user["_id"] = str(user["_id"])
     return user

@@ -113,15 +113,30 @@ const Upload = ({
       if (!ctx) return;
 
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) return;
-          const frameFile = new File([blob], `realtime-frame-${Date.now()}.jpg`, { type: "image/jpeg" });
-          onRealtimeFrame(frameFile);
-        },
-        "image/jpeg",
-        0.88
-      );
+
+      const emitFrame = (blob) => {
+        if (!blob) {
+          runtimeLogger.warn("camera.frame_capture.empty_blob");
+          return;
+        }
+        onRealtimeFrame(blob);
+      };
+
+      // Fallback keeps realtime capture working on browsers with flaky toBlob support.
+      if (typeof canvas.toBlob === "function") {
+        canvas.toBlob((blob) => emitFrame(blob), "image/jpeg", 0.88);
+        return;
+      }
+
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.88);
+      fetch(dataUrl)
+        .then((res) => res.blob())
+        .then((blob) => emitFrame(blob))
+        .catch((error) => {
+          runtimeLogger.error("camera.frame_capture.fallback_failed", {
+            message: error?.message,
+          });
+        });
     } catch (error) {
       runtimeLogger.error("camera.frame_capture.failed", {
         message: error?.message,

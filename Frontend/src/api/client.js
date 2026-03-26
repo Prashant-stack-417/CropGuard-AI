@@ -55,11 +55,12 @@ export const api = {
         });
 
         const formData = new FormData();
-        formData.append("file", file);
+        const fallbackName = `realtime-frame-${Date.now()}.jpg`;
+        const fileName = typeof file?.name === "string" && file.name ? file.name : fallbackName;
+        formData.append("file", file, fileName);
 
         try {
             const response = await client.post(requestPath, formData, {
-                headers: { "Content-Type": "multipart/form-data" },
                 timeout: 60000,
             });
 
