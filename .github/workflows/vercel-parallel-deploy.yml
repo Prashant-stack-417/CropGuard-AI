@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 
 env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_FRONTEND_PROJECT_ID }}
   VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -18,12 +19,27 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 24
+
+      - name: Validate Vercel secrets
+        run: |
+          if [ -z "${{ env.VERCEL_TOKEN }}" ]; then
+            echo "Missing VERCEL_TOKEN secret" >&2
+            exit 1
+          fi
+          if [ -z "${{ env.VERCEL_ORG_ID }}" ]; then
+            echo "Missing VERCEL_ORG_ID secret" >&2
+            exit 1
+          fi
+          if [ -z "${{ env.VERCEL_PROJECT_ID }}" ]; then
+            echo "Missing VERCEL_FRONTEND_PROJECT_ID secret" >&2
+            exit 1
+          fi
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
