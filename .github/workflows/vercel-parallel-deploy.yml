@@ -59,7 +59,7 @@ jobs:
       - name: Build frontend
         working-directory: Frontend
         run: |
-          vercel build --prod --build-env VITE_APP_RELEASE=${{ env.RELEASE_SHA }} --token=${{ env.VERCEL_TOKEN }}
+          vercel build --prod --build-env VITE_APP_RELEASE=${{ env.RELEASE_SHA }} --build-env VITE_API_URL=https://cropguard-backend.vercel.app --token=${{ env.VERCEL_TOKEN }}
 
       - name: Deploy frontend
         id: deploy

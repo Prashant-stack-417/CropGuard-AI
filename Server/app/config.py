@@ -31,7 +31,8 @@ ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
 _default_cors_origins = (
 	"http://localhost:5173,"
 	"http://localhost:3000,"
-	"https://crop-guard-ai-ebon.vercel.app"
+	"https://crop-guard-ai-ebon.vercel.app,"
+	"https://cropguard-backend.vercel.app"
 )
 CORS_ORIGINS = [
 	origin.strip()
