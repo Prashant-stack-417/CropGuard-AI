@@ -1,6 +1,0 @@
-notebooks/
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.ipynb

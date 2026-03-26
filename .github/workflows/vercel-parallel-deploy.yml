@@ -6,24 +6,16 @@ on:
       - main
   workflow_dispatch:
 
-concurrency:
-  group: vercel-prod-${{ github.ref }}
-  cancel-in-progress: true
-
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_FRONTEND_PROJECT_ID }}
   VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-  RELEASE_SHA: ${{ github.sha }}
 
 jobs:
   deploy-frontend:
     name: Deploy frontend
-    runs-on: ${{ vars.CI_RUNNER_LABEL || 'ubuntu-latest' }}
-    env:
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_FRONTEND_PROJECT_ID }}
-    outputs:
-      deployment_url: ${{ steps.deploy.outputs.deployment_url }}
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -56,14 +48,8 @@ jobs:
         working-directory: Frontend
         run: vercel pull --yes --environment=production --token=${{ env.VERCEL_TOKEN }}
 
-      - name: Build frontend
+      - name: Build and deploy frontend
         working-directory: Frontend
         run: |
-          vercel build --prod --build-env VITE_APP_RELEASE=${{ env.RELEASE_SHA }} --build-env VITE_API_URL=https://cropguard-backend.vercel.app --token=${{ env.VERCEL_TOKEN }}
-
-      - name: Deploy frontend
-        id: deploy
-        working-directory: Frontend
-        run: |
-          url=$(vercel deploy --prebuilt --prod --meta release=${{ env.RELEASE_SHA }} --token=${{ env.VERCEL_TOKEN }})
-          echo "deployment_url=$url" >> "$GITHUB_OUTPUT"
+          vercel build --prod --build-env VITE_APP_RELEASE=${{ github.sha }} --token=${{ env.VERCEL_TOKEN }}
+          vercel deploy --prebuilt --prod --token=${{ env.VERCEL_TOKEN }}
