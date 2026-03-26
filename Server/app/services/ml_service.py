@@ -230,8 +230,10 @@ def predict(image_bytes: bytes) -> dict:
     Raises RuntimeError if the ML model is not loaded.
     """
     if _model is None:
-        # Vercel/serverless fallback: keep API functional when ML runtime is unavailable.
-        return _run_demo_inference(image_bytes)
+        raise RuntimeError(
+            "ML model is not loaded. Ensure crop_disease_model.pt exists in Server/model/ "
+            "and PyTorch is installed."
+        )
 
     image = Image.open(io.BytesIO(image_bytes))
     return _run_real_inference(image)
