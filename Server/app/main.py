@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import CORS_ORIGINS, LOG_LEVEL
-from app.database import connect_db, close_db
+from app.database import connect_db, close_db, is_db_connected
 from app.services.ml_service import load_model, is_model_loaded
 
 # ── Logging ───────────────────────────────────────────────────────────
@@ -30,8 +30,11 @@ async def lifespan(app: FastAPI):
     logger.info("🌱 Starting CropGuard AI...")
 
     # Connect to MongoDB
-    await connect_db()
-    logger.info("✅ MongoDB connected")
+    db_connected = await connect_db()
+    if db_connected:
+        logger.info("✅ MongoDB connected")
+    else:
+        logger.warning("⚠️ MongoDB unavailable — auth/history persistence disabled")
 
     # Load ML model
     model_loaded = load_model()
@@ -102,6 +105,7 @@ async def api_status():
     return {
         "api": "running",
         "release": APP_RELEASE,
+        "db": "connected" if is_db_connected() else "unavailable",
         "model": "loaded" if is_model_loaded() else "not_loaded",
         "endpoints": [
             "POST /api/register",
