@@ -36,8 +36,8 @@ const Upload = ({
   const captureIntervalRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const stopRealtime = useCallback(() => {
-    runtimeLogger.info("camera.stop", {
+  const cleanupCamera = useCallback(() => {
+    runtimeLogger.info("camera.cleanup", {
       hadInterval: Boolean(captureIntervalRef.current),
       hadStream: Boolean(streamRef.current),
     });
@@ -55,11 +55,19 @@ const Upload = ({
     if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
+  }, []);
 
+  const stopRealtime = useCallback(() => {
+    runtimeLogger.info("camera.stop", {
+      hadInterval: Boolean(captureIntervalRef.current),
+      hadStream: Boolean(streamRef.current),
+    });
+
+    cleanupCamera();
     setIsStartingCamera(false);
     setIsCameraRunning(false);
     onRealtimeStateChange(false);
-  }, [onRealtimeStateChange]);
+  }, [cleanupCamera, onRealtimeStateChange]);
 
   useEffect(() => {
     return () => stopRealtime();
@@ -156,7 +164,7 @@ const Upload = ({
       runtimeLogger.info("camera.start.requested");
       setIsStartingCamera(true);
       setCameraError("");
-      stopRealtime();
+      cleanupCamera();
 
       const cameraConstraints = [
         {
