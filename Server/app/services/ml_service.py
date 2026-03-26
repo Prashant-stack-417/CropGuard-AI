@@ -90,7 +90,7 @@ def load_model():
 
     # ── Fallback: TensorFlow ─────────────────────────────────────
     try:
-        import tensorflow as tf
+        import tensorflow as tf  # type: ignore
 
         _model = tf.keras.models.load_model(str(model_path))
         logger.info(f"✅ TensorFlow model loaded from {model_path}")

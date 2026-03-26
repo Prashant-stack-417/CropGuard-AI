@@ -80,3 +80,4 @@ instance/
 *.md
 .vercel
 .env*.local
+.venv

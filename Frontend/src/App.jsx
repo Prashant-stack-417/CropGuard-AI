@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { SpeedInsights } from "@vercel/speed-insights/react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import Fab from "@mui/material/Fab";
 import Zoom from "@mui/material/Zoom";
 import KeyboardArrowUpOutlined from "@mui/icons-material/KeyboardArrowUpOutlined";
-import { Analytics } from "@vercel/analytics/react";
+
+// Lazy load Vercel analytics to avoid tree-shaking issues
+const SpeedInsights = lazy(() => import("@vercel/speed-insights/react").then(m => ({ default: m.SpeedInsights })));
+const Analytics = lazy(() => import("@vercel/analytics/react").then(m => ({ default: m.Analytics })));
 import { AuthProvider } from "./context/AuthContext";
 import { api, getClientRelease } from "./api/client";
 import Navbar from "./components/Navbar";
@@ -282,8 +284,12 @@ function App() {
           </Box>
         </BrowserRouter>
       </AuthProvider>
-      <Analytics />
-      <SpeedInsights />
+      <Suspense fallback={null}>
+        <Analytics />
+      </Suspense>
+      <Suspense fallback={null}>
+        <SpeedInsights />
+      </Suspense>
     </ThemeProvider>
   );
 }

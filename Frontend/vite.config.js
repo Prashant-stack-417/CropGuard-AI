@@ -6,5 +6,15 @@ export default defineConfig({
   plugins: [react()],
   build: {
     chunkSizeWarningLimit: 700,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vercel: ['@vercel/analytics', '@vercel/speed-insights'],
+        },
+      },
+    },
+  },
+  ssr: {
+    noExternal: ['@vercel/analytics', '@vercel/speed-insights'],
   },
 })
