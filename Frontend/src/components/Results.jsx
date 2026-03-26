@@ -8,6 +8,7 @@ import Stack from "@mui/material/Stack";
 import LinearProgress from "@mui/material/LinearProgress";
 import Chip from "@mui/material/Chip";
 import CircularProgress from "@mui/material/CircularProgress";
+import Alert from "@mui/material/Alert";
 import DownloadOutlined from "@mui/icons-material/DownloadOutlined";
 import LocalFloristOutlined from "@mui/icons-material/LocalFloristOutlined";
 import ScienceOutlined from "@mui/icons-material/ScienceOutlined";
@@ -15,7 +16,7 @@ import WarningAmberOutlined from "@mui/icons-material/WarningAmberOutlined";
 import VerifiedOutlined from "@mui/icons-material/VerifiedOutlined";
 import BoltOutlined from "@mui/icons-material/BoltOutlined";
 
-const Results = ({ result, isLoading, isRealtimeActive, isRealtimeAnalyzing }) => {
+const Results = ({ result, isLoading, isRealtimeActive, isRealtimeAnalyzing, realtimeError }) => {
   if (!result && !isLoading && !isRealtimeActive) return null;
 
   const getConfidenceColor = (c) => {
@@ -112,6 +113,11 @@ const Results = ({ result, isLoading, isRealtimeActive, isRealtimeAnalyzing }) =
               <Typography color="text.secondary" variant="body2">
                 We are analyzing frames continuously. Hold the leaf steady for clearer results.
               </Typography>
+              {realtimeError ? (
+                <Alert severity="error" sx={{ mt: 2, textAlign: "left" }}>
+                  {realtimeError}
+                </Alert>
+              ) : null}
             </Paper>
           ) : (
             <Paper

@@ -85,10 +85,12 @@ const theme = createTheme({
 function HomePage() {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [detectionResult, setDetectionResult] = useState(null);
+  const [realtimeError, setRealtimeError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isRealtimeActive, setIsRealtimeActive] = useState(false);
   const [isRealtimeAnalyzing, setIsRealtimeAnalyzing] = useState(false);
   const liveRequestInFlight = useRef(false);
+  const hasScrolledToRealtimeResult = useRef(false);
 
   const detectDisease = useCallback(async (file, options = { live: false }) => {
     const { live } = options;
@@ -100,9 +102,11 @@ function HomePage() {
       }
       liveRequestInFlight.current = true;
       setIsRealtimeAnalyzing(true);
+      setRealtimeError("");
     } else {
       setIsLoading(true);
       setDetectionResult(null);
+      setRealtimeError("");
     }
 
     runtimeLogger.info("predict.flow.started", {
@@ -112,6 +116,7 @@ function HomePage() {
     try {
       const res = await api.predict(file);
       setDetectionResult(res.data);
+      setRealtimeError("");
 
       runtimeLogger.info("predict.flow.completed", {
         mode: live ? "realtime" : "upload",
@@ -119,19 +124,31 @@ function HomePage() {
         confidence: res?.data?.confidence || null,
       });
 
+      if (live && !hasScrolledToRealtimeResult.current) {
+        hasScrolledToRealtimeResult.current = true;
+        setTimeout(() => {
+          document.getElementById("results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+      }
+
       if (!live) {
         setTimeout(() => {
           document.getElementById("results")?.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 100);
       }
     } catch (error) {
+      const detail = error?.response?.data?.detail || error?.message || "Unable to analyze live camera frame.";
+
       runtimeLogger.error("predict.flow.failed", {
         mode: live ? "realtime" : "upload",
         status: error?.response?.status || null,
-        detail: error?.response?.data?.detail || error?.message,
+        detail,
       });
-      if (!live) {
-        alert(`Detection failed: ${error.response?.data?.detail || error.message}`);
+
+      if (live) {
+        setRealtimeError(detail);
+      } else {
+        alert(`Detection failed: ${detail}`);
       }
     } finally {
       if (live) {
@@ -146,6 +163,8 @@ function HomePage() {
   const handleImageUpload = useCallback((imageData, file) => {
     setUploadedImage(imageData);
     setDetectionResult(null);
+    setRealtimeError("");
+    hasScrolledToRealtimeResult.current = false;
 
     // Only disable realtime when processing a manual file upload.
     // Realtime camera startup clears preview by calling onImageUpload(null)
@@ -163,9 +182,11 @@ function HomePage() {
 
   const handleRealtimeStateChange = useCallback((isActive) => {
     setIsRealtimeActive(isActive);
+    setRealtimeError("");
     if (!isActive) {
       setIsRealtimeAnalyzing(false);
       liveRequestInFlight.current = false;
+      hasScrolledToRealtimeResult.current = false;
     }
   }, []);
 
@@ -190,6 +211,7 @@ function HomePage() {
             isLoading={isLoading}
             isRealtimeActive={isRealtimeActive}
             isRealtimeAnalyzing={isRealtimeAnalyzing}
+            realtimeError={realtimeError}
           />
         </Box>
       )}
