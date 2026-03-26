@@ -91,28 +91,34 @@ const Upload = ({
   };
 
   const captureFrameAndPredict = useCallback(() => {
-    if (!videoRef.current || !canvasRef.current || !onRealtimeFrame) return;
-    if (videoRef.current.videoWidth === 0 || videoRef.current.videoHeight === 0) return;
+    try {
+      if (!videoRef.current || !canvasRef.current || !onRealtimeFrame) return;
+      if (videoRef.current.videoWidth === 0 || videoRef.current.videoHeight === 0) return;
 
-    const canvas = canvasRef.current;
-    const video = videoRef.current;
+      const canvas = canvasRef.current;
+      const video = videoRef.current;
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
 
-    const ctx = canvas.getContext("2d", { willReadFrequently: true });
-    if (!ctx) return;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      if (!ctx) return;
 
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) return;
-        const frameFile = new File([blob], `realtime-frame-${Date.now()}.jpg`, { type: "image/jpeg" });
-        onRealtimeFrame(frameFile);
-      },
-      "image/jpeg",
-      0.88
-    );
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) return;
+          const frameFile = new File([blob], `realtime-frame-${Date.now()}.jpg`, { type: "image/jpeg" });
+          onRealtimeFrame(frameFile);
+        },
+        "image/jpeg",
+        0.88
+      );
+    } catch (error) {
+      runtimeLogger.error("camera.frame_capture.failed", {
+        message: error?.message,
+      });
+    }
   }, [onRealtimeFrame]);
 
   const getCameraErrorMessage = (error) => {
@@ -149,8 +155,8 @@ const Upload = ({
     try {
       runtimeLogger.info("camera.start.requested");
       setIsStartingCamera(true);
-      stopRealtime();
       setCameraError("");
+      stopRealtime();
 
       const cameraConstraints = [
         {
@@ -197,9 +203,10 @@ const Upload = ({
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        videoRef.current.muted = true;
         videoRef.current.setAttribute("playsinline", "true");
         await new Promise((resolve) => {
-          if (videoRef.current.readyState >= 1) {
+          if (videoRef.current.readyState >= 2) {
             resolve();
             return;
           }
@@ -210,7 +217,14 @@ const Upload = ({
           videoRef.current.addEventListener("loadedmetadata", onLoadedMetadata, { once: true });
         });
         try {
-          await videoRef.current.play();
+          const playPromise = videoRef.current.play();
+          if (playPromise !== undefined) {
+            await playPromise.catch((error) => {
+              runtimeLogger.warn("camera.start.play_rejected", {
+                message: error?.message,
+              });
+            });
+          }
         } catch (playError) {
           // Some mobile browsers can reject play() transiently while stream is still valid.
           runtimeLogger.warn("camera.start.play_rejected", {

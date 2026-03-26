@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -90,7 +90,7 @@ function HomePage() {
   const [isRealtimeAnalyzing, setIsRealtimeAnalyzing] = useState(false);
   const liveRequestInFlight = useRef(false);
 
-  const detectDisease = async (file, options = { live: false }) => {
+  const detectDisease = useCallback(async (file, options = { live: false }) => {
     const { live } = options;
 
     if (live) {
@@ -141,7 +141,7 @@ function HomePage() {
         setIsLoading(false);
       }
     }
-  };
+  }, []);
 
   const handleImageUpload = useCallback((imageData, file) => {
     setUploadedImage(imageData);
@@ -155,11 +155,11 @@ function HomePage() {
       setIsRealtimeAnalyzing(false);
       detectDisease(file);
     }
-  }, []);
+  }, [detectDisease]);
 
   const handleRealtimeFrame = useCallback((frameFile) => {
     detectDisease(frameFile, { live: true });
-  }, []);
+  }, [detectDisease]);
 
   const handleRealtimeStateChange = useCallback((isActive) => {
     setIsRealtimeActive(isActive);
