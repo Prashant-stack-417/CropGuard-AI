@@ -13,5 +13,4 @@ numpy>=1.26.0
 # ML — PyTorch (CPU-only for inference)
 # Install with: pip install torch --index-url https://download.pytorch.org/whl/cpu
 torch>=2.2.0
-ngrok>=1.4.0
 
