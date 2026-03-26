@@ -137,7 +137,16 @@ function HomePage() {
         }, 100);
       }
     } catch (error) {
-      const detail = error?.response?.data?.detail || error?.message || "Unable to analyze live camera frame.";
+      let detail = error?.response?.data?.detail || error?.message || "Unable to analyze live camera frame.";
+      
+      // Convert validation error objects to readable strings
+      if (typeof detail === "object" && detail !== null) {
+        if (Array.isArray(detail)) {
+          detail = detail.map(err => err?.msg || JSON.stringify(err)).join("; ");
+        } else {
+          detail = detail.msg || JSON.stringify(detail);
+        }
+      }
 
       runtimeLogger.error("predict.flow.failed", {
         mode: live ? "realtime" : "upload",
@@ -146,7 +155,7 @@ function HomePage() {
       });
 
       if (live) {
-        setRealtimeError(detail);
+        setRealtimeError(String(detail));
       } else {
         alert(`Detection failed: ${detail}`);
       }

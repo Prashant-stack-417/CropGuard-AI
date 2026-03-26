@@ -52,15 +52,25 @@ export const api = {
         runtimeLogger.info("predict.request.start", {
             transport: "axios",
             requestPath,
+            fileType: file?.type || typeof file,
+            fileName: file?.name || "blob",
         });
 
         const formData = new FormData();
-        const fallbackName = `realtime-frame-${Date.now()}.jpg`;
-        const fileName = typeof file?.name === "string" && file.name ? file.name : fallbackName;
-        formData.append("file", file, fileName);
+        
+        // Ensure we have a valid File or Blob with proper name
+        let uploadFile = file;
+        if (file instanceof Blob && !(file instanceof File)) {
+            // Convert Blob to File if needed
+            const fileName = `realtime-frame-${Date.now()}.jpg`;
+            uploadFile = new File([file], fileName, { type: "image/jpeg" });
+        }
+        
+        formData.append("file", uploadFile);
 
         try {
             const response = await client.post(requestPath, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
                 timeout: 60000,
             });
 
